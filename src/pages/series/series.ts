@@ -1,14 +1,29 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { MovieService } from '../../app/services/movieService';
+import { Result } from '../../app/interfaces/interface';
+import { MovieCard } from '../../components/movie-card/movie-card';
 
 @Component({
-    selector: 'app-series',
-    imports: [],
-    templateUrl: './series.html',
-    styles: `
+  selector: 'app-series',
+  imports: [MovieCard],
+  templateUrl: './series.html',
+  styles: `
     :host {
       display: block;
     }
   `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
-export class Series { }
+export class Series {
+  movieService = inject(MovieService);
+  series: Result[] = [];
+
+  constructor() {
+    this.movieService.obtenerSeriesTopRated().subscribe({
+      next: (res) => {
+        this.series = res.results;
+      },
+      error: (err) => console.log(err)
+    });
+  }
+}

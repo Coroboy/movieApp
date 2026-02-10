@@ -13,16 +13,24 @@ export class MovieService {
   API_KEY = environment.api_key
   constructor() { }
 
-  obtenerCartelera(){
+  obtenerCartelera() {
     return this.http.get<Response>(`${this.API_URL}movie/now_playing?language=es-ES&api_key=${this.API_KEY}`)
   }
 
-  obtenerEstrenos(){
+  obtenerEstrenos() {
     return this.http.get<Response>(`${this.API_URL}movie/upcoming?language=es-ES&api_key=${this.API_KEY}`)
   }
 
-  obtenerMovie(id: string){
+  obtenerMovie(id: string) {
     return this.http.get<MovieDetail>(`${this.API_URL}movie/${id}?language=es-ES&api_key=${this.API_KEY}`)
+  }
+
+  obtenerSeriesTopRated() {
+    return this.http.get<Response>(`${this.API_URL}tv/top_rated?language=es-ES&api_key=${this.API_KEY}`)
+  }
+
+  obtenerSerie(id: string) {
+    return this.http.get<MovieDetail>(`${this.API_URL}tv/${id}?language=es-ES&api_key=${this.API_KEY}`)
   }
 
 }

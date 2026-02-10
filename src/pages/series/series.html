@@ -1,1 +1,5 @@
-<p>Series works!</p>
+<div class="grid grid-cols-4 gap-2">
+    @for (item of series; track item.id) {
+    <app-movie-card [movie]="item" [type]="'tv'"></app-movie-card>
+    }
+</div>

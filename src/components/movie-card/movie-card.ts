@@ -4,10 +4,10 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-movie-card',
-  imports: [ ],
+  imports: [],
   template: ` <div class="bg-neutral-primary-soft block max-w-sm p-6 border border-default rounded-base shadow-xs">
                 <img class="rounded-base" src="https://image.tmdb.org/t/p/w500{{movie.poster_path}}" alt=""/>
-                <h5 class="mt-6 mb-2 text-2xl font-semibold tracking-tight text-heading">{{movie.title}}</h5>
+                <h5 class="mt-6 mb-2 text-2xl font-semibold tracking-tight text-heading">{{movie.title || movie.name}}</h5>
                 <p class="mb-6 text-body"> 
                   {{
                       movie.overview.length > 50 ? movie.overview.substring
@@ -19,7 +19,7 @@ import { Router } from '@angular/router';
                       Read more
                     <svg class="w-4 h-4 ms-1.5 rtl:rotate-180 -me-0.5" aria-hidden="true" xmins="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4"/></svg>
                   </a>
-                  <a class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded transition-colors flex items-center justify-center gap-1" href="https://vidlink.pro/movie/{{movie.id}}">
+                  <a class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded transition-colors flex items-center justify-center gap-1" href="https://vidlink.pro/{{type}}/{{movie.id}}">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z" />
                     </svg>
@@ -27,7 +27,7 @@ import { Router } from '@angular/router';
                   </a>
                 </div>
               </div>`
-            ,
+  ,
   styles: `
     :host {
       display: block;
@@ -36,11 +36,16 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class MovieCard {
-  @Input({required: true}) movie!: Result
+  @Input({ required: true }) movie!: Result
+  @Input() type: 'movie' | 'tv' = 'movie'; // Type is 'movie' by default
   router = inject(Router)
 
   //Declaracion del metodo navigateToMovie
-  navigateToMovie(){
-    this.router.navigateByUrl(`/movie/${this.movie.id}`)
+  navigateToMovie() {
+    if (this.type === 'movie') {
+      this.router.navigateByUrl(`/movie/${this.movie.id}`)
+    } else {
+      this.router.navigateByUrl(`/series/${this.movie.id}`)
+    }
   }
- }
+}

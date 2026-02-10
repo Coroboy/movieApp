@@ -5,6 +5,7 @@ import { Cartelera } from '../pages/cartelera/cartelera';
 import { Estrenos } from '../pages/estrenos/estrenos';
 import { Movie } from '../pages/movie/movie';
 import { Series } from '../pages/series/series';
+import { SeriesDetail } from '../pages/series-detail/series-detail';
 
 export const routes: Routes = [
     {
@@ -30,6 +31,10 @@ export const routes: Routes = [
     {
         path: 'series',
         component: Series
+    },
+    {
+        path: 'series/:id',
+        component: SeriesDetail
     },
     {
         path: '**',
