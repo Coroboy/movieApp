@@ -33,4 +33,8 @@ export class MovieService {
     return this.http.get<MovieDetail>(`${this.API_URL}tv/${id}?language=es-ES&api_key=${this.API_KEY}`)
   }
 
+  obtenerTemporada(tvId: string, seasonNumber: number) {
+    return this.http.get<any>(`${this.API_URL}tv/${tvId}/season/${seasonNumber}?language=es-ES&api_key=${this.API_KEY}`)
+  }
+
 }

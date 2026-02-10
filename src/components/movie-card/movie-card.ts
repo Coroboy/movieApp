@@ -19,12 +19,23 @@ import { Router } from '@angular/router';
                       Read more
                     <svg class="w-4 h-4 ms-1.5 rtl:rotate-180 -me-0.5" aria-hidden="true" xmins="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4"/></svg>
                   </a>
-                  <a class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded transition-colors flex items-center justify-center gap-1" href="https://vidlink.pro/{{type}}/{{movie.id}}">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                    <span class="text-sm">Play</span>
-                  </a>
+                  @if (type === 'movie') {
+                    <a class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded transition-colors flex items-center justify-center gap-1" 
+                       href="https://vidlink.pro/{{type}}/{{movie.id}}">
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                      <span class="text-sm">Play</span>
+                    </a>
+                  } @else {
+                    <button class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded transition-colors flex items-center justify-center gap-1"
+                            (click)="navigateToMovie()">
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                      <span class="text-sm">Episodes</span>
+                    </button>
+                  }
                 </div>
               </div>`
   ,

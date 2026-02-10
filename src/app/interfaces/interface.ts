@@ -64,6 +64,18 @@ export interface MovieDetail {
     episode_run_time?: number[];
     number_of_episodes?: number;
     number_of_seasons?: number;
+    seasons?: Season[];
+}
+
+export interface Season {
+    air_date: Date;
+    episode_count: number;
+    id: number;
+    name: string;
+    overview: string;
+    poster_path: string;
+    season_number: number;
+    vote_average: number;
 }
 
 export interface Genre {
