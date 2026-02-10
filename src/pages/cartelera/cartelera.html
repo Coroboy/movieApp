@@ -1,0 +1,7 @@
+<div class="grid grid-cols-4 gap-2">
+
+    @for (peli of cartelera; track $index) {
+        <app-movie-card [movie]="peli"></app-movie-card>
+    }
+    
+</div>

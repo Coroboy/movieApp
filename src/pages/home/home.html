@@ -1,0 +1,113 @@
+<div class="grid grid-cols-2">
+
+    <div class="bg-green-400 m-2 p-2 rounded-xl">
+        <h1 class="text-xl font-bold">Directiva @ if</h1>
+        <hr>
+        <div class="m-1">
+            @if(showContent){
+            <p class="text-justify">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis, labore iure. Et fugiat cum delectus illo placeat explicabo expedita exercitationem soluta perspiciatis libero ab doloremque quam, accusamus nesciunt repellendus veniam.
+            </p>}
+            @else {
+                <p>Ver bajo su propio riesgo...</p>
+            }
+            <button (click)="verSpoiler()" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">
+                {{showContent ? 'Ocultar Spoiler' : 'Ver Spoiler'}}
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-blue-400 m-2 p-2 rounded-xl">
+        <h1 class="text-xl font-bold">
+            @if(rol != 'admin'){
+            User
+            }
+            @else {
+            Admin
+            }</h1>
+        <hr>
+        <div class="m-1">
+            <ul>
+            <li class="text-lg font-bold border p-2">Usuarios</li>
+            @if(rol != 'admin'){            
+                <li class="text-lg font-bold border p-2">Ventas</li>
+                <li class="text-lg font-bold border p-2">Perfil</li>
+                <button (click)="serAdmin()" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Ser Admin</button>
+            }
+            @else {
+            
+                <li class="text-lg font-bold border p-2">Ventas</li>
+                <li class="text-lg font-bold border p-2">Perfil</li>
+                <li class="text-lg font-bold border p-2">Configuracion</li>
+            }
+            </ul>
+        </div>
+    </div>
+
+    <div class="bg-amber-400 m-2 p-2 rounded-xl">
+        <h1 class="text-2xl mb-3 font-extralight">Directiva @ for</h1>
+        <hr>
+        @for (dia of diasSemana; track $index) {
+            <button class="bg-amber-800 p-2 m-1 w-1/2 font-medium text-zinc-50 rounded-xl">{{dia}}</button>
+        }
+    </div>
+
+    <div class="bg-purple-200 m-2 p-2 rounded-xl">
+        <h1 class="text-2xl mb-3 font-extralight">Directiva @ for - con array de objetos</h1>
+        <hr>
+        <ol>
+            @for (contacto of contactos; track $index) {
+                @if (!contacto.visualizarNumero) {
+                    <li class="text-lg border-b-2 p-2">{{contacto.nombre}} -> {{contacto.email}}</li>
+                    @for (red of contacto.redesSociales; track $index) {
+                        <button class="bg-amber-800 p-2 m-1 w-1/2 font-medium text-zinc-50 rounded-xl">{{red}}</button>
+                    }
+                }@else {
+                    <li class="text-lg border-b-2 p-2">{{contacto.nombre}} -> {{contacto.email}} -> {{contacto.telefono}}</li>
+                    @for (red of contacto.redesSociales; track $index) {
+                        <button class="bg-amber-800 p-2 m-1 w-1/2 font-medium text-zinc-50 rounded-xl">{{red}}</button>
+                    }
+                }
+                <button (click)="verNumero(contacto)" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600"> {{ contacto.visualizarNumero ? 'Ocultar teléfono' : 'Ver teléfono' }}</button>
+            }
+        </ol>
+    </div>
+
+    <div class="bg-pink-400 m-2 p-2 rounded-xl">
+        <h1 class="text-2xl mb-3 font-extralight">Directiva @ switch</h1>
+        <hr>
+        <h2>Estado de tu Pedido</h2>
+        <div class="buttons">
+            <button (click)="cambiarEstado('pendiente')" class="mt-2 m-1.5 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Pendiente</button>
+            <button (click)="cambiarEstado('en_camino')" class="mt-2 m-1.5 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">En Camino</button>
+            <button (click)="cambiarEstado('entregado')" class="mt-2 m-1.5 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Entregado</button>
+            <button (click)="cambiarEstado('error')" class="mt-2 m-1.5 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Simular Error</button>
+        </div>
+        <hr>
+        <div class="status-card">
+            @switch (estadoEnvio) {
+                @case ('pendiente') {
+                    <div class="alert info">
+                        <p><strong>Pedido recibido:</strong> Estamos preparando tu paquete en el almacén.</p>
+                    </div>
+                }
+                @case ('en_camino') {
+                    <div class="alert warning">
+                        <p><strong>En camino:</strong> El repartidor lleva tu pedido y llegará pronto.</p>
+                    </div>
+                }
+                @case ('entregado') {
+                    <div class="alert success">
+                        <p><strong>¡Logrado!:</strong> El paquete ha sido entregado correctamente.</p>
+                    </div>
+                }
+                @default {
+                    <div class="alert danger">
+                        <p><strong>Error:</strong> No pudimos encontrar información de este estado.</p>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+</div>
