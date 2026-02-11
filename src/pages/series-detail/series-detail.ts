@@ -188,11 +188,19 @@ export class SeriesDetail {
 
     loadSeasonData() {
         if (this.selectedSeasonNumber) {
+            console.log(`Loading season ${this.selectedSeasonNumber} for series ${this.serieId}`);
             this.movieS.obtenerTemporada(this.serieId, this.selectedSeasonNumber).subscribe({
                 next: (season) => {
-                    this.episodes = season.episodes;
+                    console.log('Season data received:', season);
+                    console.log('Episodes count:', season.episodes?.length || 0);
+                    // Don't filter episodes - assign all of them
+                    this.episodes = season.episodes || [];
+                    console.log('Episodes assigned:', this.episodes.length);
                 },
-                error: (err) => console.log('Error loading season', err)
+                error: (err) => {
+                    console.error('Error loading season:', err);
+                    this.episodes = [];
+                }
             });
         }
     }
