@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
       <div class="flex items-center justify-between">
         
         <!-- Logo -->
-        <a routerLink="/home" class="flex items-center space-x-3 group">
+        <a href="https://flowbite.com" class="flex items-center space-x-3 group">
           <div class="relative">
             <svg class="w-10 h-10 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)] group-hover:drop-shadow-[0_0_12px_rgba(250,204,21,0.7)] transition-all" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"></path>
