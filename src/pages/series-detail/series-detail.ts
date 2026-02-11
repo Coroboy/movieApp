@@ -8,10 +8,11 @@ import { DatePipe, DecimalPipe, CommonModule } from '@angular/common';
 import { FavoritesService } from '../../app/services/favorites.service';
 import { LikesService, LikeStatus } from '../../app/services/likes.service';
 import { FormsModule } from '@angular/forms';
+import { MoviePlayer } from '../../components/movie-player/movie-player';
 
 @Component({
     selector: 'app-series-detail',
-    imports: [MovieCard, DatePipe, DecimalPipe, CommonModule, FormsModule],
+    imports: [MovieCard, DatePipe, DecimalPipe, CommonModule, FormsModule, MoviePlayer],
     templateUrl: './series-detail.html',
     styles: `
     :host {
@@ -38,6 +39,7 @@ export class SeriesDetail {
     // Season and Episode selection
     selectedSeason: Season | null = null;
     selectedSeasonNumber: number = 1;
+    selectedEpisodeNumber: number = 1;
     episodes: any[] = []
 
     constructor() {
@@ -207,6 +209,7 @@ export class SeriesDetail {
 
     onSeasonChange() {
         if (this.selectedSeasonNumber) {
+            this.selectedEpisodeNumber = 1;
             this.loadSeasonData();
         }
     }

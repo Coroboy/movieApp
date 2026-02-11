@@ -1,3 +1,4 @@
+
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, Meta, SafeResourceUrl, Title } from '@angular/platform-browser';
@@ -7,16 +8,17 @@ import { MovieCard } from '../../components/movie-card/movie-card';
 import { CurrencyPipe, DatePipe, DecimalPipe, CommonModule } from '@angular/common';
 import { FavoritesService } from '../../app/services/favorites.service';
 import { LikesService, LikeStatus } from '../../app/services/likes.service';
+import { MoviePlayer } from '../../components/movie-player/movie-player';
 
 @Component({
   selector: 'app-movie',
-  imports: [MovieCard, CurrencyPipe, DatePipe, DecimalPipe, CommonModule],
+  imports: [MovieCard, CurrencyPipe, DatePipe, DecimalPipe, CommonModule, MoviePlayer],
   templateUrl: './movie.html',
   styles: `
     :host {
-      display: block;
-    }
-  `,
+  display: block;
+}
+`,
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class Movie {
