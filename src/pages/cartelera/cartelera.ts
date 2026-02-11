@@ -72,14 +72,16 @@ export class Cartelera implements OnInit {
   organizarPorGeneros() {
     const genreMap = new Map<number, Result[]>();
 
-    // Group movies by first genre
+    // Group movies by ALL their genres (not just the first one)
     this.cartelera.forEach(movie => {
       if (movie.genre_ids && movie.genre_ids.length > 0) {
-        const primaryGenre = movie.genre_ids[0];
-        if (!genreMap.has(primaryGenre)) {
-          genreMap.set(primaryGenre, []);
-        }
-        genreMap.get(primaryGenre)!.push(movie);
+        // Add movie to every genre it belongs to
+        movie.genre_ids.forEach(genreId => {
+          if (!genreMap.has(genreId)) {
+            genreMap.set(genreId, []);
+          }
+          genreMap.get(genreId)!.push(movie);
+        });
       }
     });
 

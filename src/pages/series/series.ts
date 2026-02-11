@@ -71,13 +71,16 @@ export class Series implements OnInit {
   organizarPorGeneros() {
     const genreMap = new Map<number, Result[]>();
 
+    // Group series by ALL their genres (not just the first one)
     this.series.forEach(serie => {
       if (serie.genre_ids && serie.genre_ids.length > 0) {
-        const primaryGenre = serie.genre_ids[0];
-        if (!genreMap.has(primaryGenre)) {
-          genreMap.set(primaryGenre, []);
-        }
-        genreMap.get(primaryGenre)!.push(serie);
+        // Add series to every genre it belongs to
+        serie.genre_ids.forEach(genreId => {
+          if (!genreMap.has(genreId)) {
+            genreMap.set(genreId, []);
+          }
+          genreMap.get(genreId)!.push(serie);
+        });
       }
     });
 
