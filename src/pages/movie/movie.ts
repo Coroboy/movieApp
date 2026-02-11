@@ -109,11 +109,17 @@ export class Movie {
   updateMetaTags() {
     if (!this.movie) return;
 
-    const title = `${this.movie.title} - movieApp`;
-    const description = this.movie.overview || `Mira ${this.movie.title} en movieApp. Descubre detalles, tráiler y recomendaciones.`;
+    const year = new Date(this.movie.release_date).getFullYear();
+    const title = `${this.movie.title} (${year}) - movieApp`;
+    const description = this.movie.overview
+      ? this.movie.overview.substring(0, 200) + (this.movie.overview.length > 200 ? '...' : '')
+      : `Mira ${this.movie.title} en movieApp. Descubre detalles, tráiler y recomendaciones.`;
+
+    // Use w1280 instead of original to ensure image is < 5MB for social cards
     const image = this.movie.backdrop_path
-      ? `https://image.tmdb.org/t/p/original${this.movie.backdrop_path}`
-      : `https://image.tmdb.org/t/p/w500${this.movie.poster_path}`;
+      ? `https://image.tmdb.org/t/p/w1280${this.movie.backdrop_path}`
+      : `https://image.tmdb.org/t/p/w780${this.movie.poster_path}`;
+
     const url = window.location.href;
 
     // Update Browser Title
@@ -121,13 +127,16 @@ export class Movie {
 
     // Standard Meta Tags
     this.meta.updateTag({ name: 'description', content: description });
-    this.meta.updateTag({ name: 'keywords', content: `película, ${this.movie.title}, movieApp, streaming, cine` });
+    this.meta.updateTag({ name: 'keywords', content: `${this.movie.title}, película, ${year}, cine, streaming, trailer, movieApp` });
+    this.meta.updateTag({ name: 'author', content: 'movieApp' });
 
     // Open Graph Tags (Facebook, WhatsApp, LinkedIn)
     this.meta.updateTag({ property: 'og:site_name', content: 'movieApp' });
     this.meta.updateTag({ property: 'og:title', content: title });
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:image', content: image });
+    this.meta.updateTag({ property: 'og:image:width', content: '1280' });
+    this.meta.updateTag({ property: 'og:image:height', content: '720' });
     this.meta.updateTag({ property: 'og:url', content: url });
     this.meta.updateTag({ property: 'og:type', content: 'video.movie' });
 
@@ -136,6 +145,7 @@ export class Movie {
     this.meta.updateTag({ name: 'twitter:title', content: title });
     this.meta.updateTag({ name: 'twitter:description', content: description });
     this.meta.updateTag({ name: 'twitter:image', content: image });
+    this.meta.updateTag({ name: 'twitter:image:alt', content: `Poster de ${this.movie.title}` });
   }
 
   loadTrailer() {

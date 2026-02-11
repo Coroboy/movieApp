@@ -123,11 +123,17 @@ export class SeriesDetail {
     updateMetaTags() {
         if (!this.serie) return;
 
-        const title = `${this.serie.name} - movieApp`;
-        const description = this.serie.overview || `Disfruta de ${this.serie.name} en movieApp. Encuentra información de temporadas, episodios y mucho más.`;
+        const year = this.serie.first_air_date ? new Date(this.serie.first_air_date).getFullYear() : '';
+        const title = `${this.serie.name} ${year ? '(' + year + ')' : ''} - movieApp`;
+        const description = this.serie.overview
+            ? this.serie.overview.substring(0, 200) + (this.serie.overview.length > 200 ? '...' : '')
+            : `Disfruta de ${this.serie.name} en movieApp. Encuentra información de temporadas, episodios y mucho más.`;
+
+        // Use w1280 for better social compatibility
         const image = this.serie.backdrop_path
-            ? `https://image.tmdb.org/t/p/original${this.serie.backdrop_path}`
-            : `https://image.tmdb.org/t/p/w500${this.serie.poster_path}`;
+            ? `https://image.tmdb.org/t/p/w1280${this.serie.backdrop_path}`
+            : `https://image.tmdb.org/t/p/w780${this.serie.poster_path}`;
+
         const url = window.location.href;
 
         // Update Browser Title
@@ -135,13 +141,16 @@ export class SeriesDetail {
 
         // Standard Meta Tags
         this.meta.updateTag({ name: 'description', content: description });
-        this.meta.updateTag({ name: 'keywords', content: `serie, ${this.serie.name}, movieApp, streaming, episodios, temporadas` });
+        this.meta.updateTag({ name: 'keywords', content: `${this.serie.name}, serie, ${year}, episodios, temporadas, streaming, movieApp` });
+        this.meta.updateTag({ name: 'author', content: 'movieApp' });
 
         // Open Graph Tags (Facebook, WhatsApp, LinkedIn)
         this.meta.updateTag({ property: 'og:site_name', content: 'movieApp' });
         this.meta.updateTag({ property: 'og:title', content: title });
         this.meta.updateTag({ property: 'og:description', content: description });
         this.meta.updateTag({ property: 'og:image', content: image });
+        this.meta.updateTag({ property: 'og:image:width', content: '1280' });
+        this.meta.updateTag({ property: 'og:image:height', content: '720' });
         this.meta.updateTag({ property: 'og:url', content: url });
         this.meta.updateTag({ property: 'og:type', content: 'video.tv_show' });
 
@@ -150,6 +159,7 @@ export class SeriesDetail {
         this.meta.updateTag({ name: 'twitter:title', content: title });
         this.meta.updateTag({ name: 'twitter:description', content: description });
         this.meta.updateTag({ name: 'twitter:image', content: image });
+        this.meta.updateTag({ name: 'twitter:image:alt', content: `Poster de ${this.serie.name}` });
     }
 
     loadTrailer() {
