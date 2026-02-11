@@ -6,6 +6,7 @@ import { Result, MovieDetail } from '../../app/interfaces/interface';
 import { MovieCard } from '../../components/movie-card/movie-card';
 import { CurrencyPipe, DatePipe, DecimalPipe, CommonModule } from '@angular/common';
 import { FavoritesService } from '../../app/services/favorites.service';
+import { LikesService, LikeStatus } from '../../app/services/likes.service';
 
 @Component({
   selector: 'app-movie',
@@ -22,6 +23,7 @@ export class Movie {
   activeRoute = inject(ActivatedRoute)
   movieS = inject(MovieService)
   favoritesService = inject(FavoritesService)
+  likesService = inject(LikesService)
   sanitizer = inject(DomSanitizer)
   meta = inject(Meta)
   titleService = inject(Title)
@@ -41,6 +43,10 @@ export class Movie {
 
   get isFavorite(): boolean {
     return this.movie ? this.favoritesService.isFavorite(this.movie.id) : false;
+  }
+
+  get likeStatus(): LikeStatus {
+    return this.movie ? this.likesService.getLikeStatus(this.movie.id) : null;
   }
 
   get trailerUrl(): SafeResourceUrl | null {
@@ -72,6 +78,18 @@ export class Movie {
         media_type: 'movie'
       };
       this.favoritesService.toggleFavorite(result);
+    }
+  }
+
+  toggleLike() {
+    if (this.movie) {
+      this.likesService.toggleLike(this.movie.id, 'movie');
+    }
+  }
+
+  toggleDislike() {
+    if (this.movie) {
+      this.likesService.toggleDislike(this.movie.id, 'movie');
     }
   }
 

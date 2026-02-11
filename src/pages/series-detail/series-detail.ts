@@ -6,6 +6,7 @@ import { Result, MovieDetail, Season } from '../../app/interfaces/interface';
 import { MovieCard } from '../../components/movie-card/movie-card';
 import { DatePipe, DecimalPipe, CommonModule } from '@angular/common';
 import { FavoritesService } from '../../app/services/favorites.service';
+import { LikesService, LikeStatus } from '../../app/services/likes.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -23,6 +24,7 @@ export class SeriesDetail {
     activeRoute = inject(ActivatedRoute)
     movieS = inject(MovieService)
     favoritesService = inject(FavoritesService)
+    likesService = inject(LikesService)
     sanitizer = inject(DomSanitizer)
     meta = inject(Meta)
     titleService = inject(Title)
@@ -47,6 +49,10 @@ export class SeriesDetail {
 
     get isFavorite(): boolean {
         return this.serie ? this.favoritesService.isFavorite(this.serie.id) : false;
+    }
+
+    get likeStatus(): LikeStatus {
+        return this.serie ? this.likesService.getLikeStatus(this.serie.id) : null;
     }
 
     get trailerUrl(): SafeResourceUrl | null {
@@ -81,6 +87,18 @@ export class SeriesDetail {
                 first_air_date: this.serie.first_air_date
             };
             this.favoritesService.toggleFavorite(result);
+        }
+    }
+
+    toggleLike() {
+        if (this.serie) {
+            this.likesService.toggleLike(this.serie.id, 'tv');
+        }
+    }
+
+    toggleDislike() {
+        if (this.serie) {
+            this.likesService.toggleDislike(this.serie.id, 'tv');
         }
     }
 
