@@ -45,7 +45,22 @@ interface ServerOption {
 
       <!-- Player Container -->
       <div class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl border border-gray-800 group">
-        @if (safeUrl) {
+        @if (currentServer === 'custom' && !safeUrl) {
+            <div class="w-full h-full flex flex-col items-center justify-center p-6 bg-gray-900">
+                <div class="w-full max-w-md space-y-4">
+                    <h3 class="text-xl font-bold text-white text-center">Pegar Enlace Personalizado</h3>
+                    <p class="text-sm text-gray-400 text-center">Si tienes un enlace directo (embed, mp4, etc.), pégalo aquí:</p>
+                    <div class="flex gap-2">
+                        <input #urlInput type="text" placeholder="https://ejemplo.com/video" 
+                            class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:ring-2 focus:ring-purple-500 outline-none">
+                        <button (click)="applyCustomUrl(urlInput.value)" 
+                            class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+                            Ver
+                        </button>
+                    </div>
+                </div>
+            </div>
+        } @else if (safeUrl) {
           <iframe 
             [src]="safeUrl"
             class="w-full h-full border-0 absolute inset-0 z-10"
@@ -105,18 +120,41 @@ export class MoviePlayer implements OnChanges {
     { name: 'Opción 1 (Latino/Sub)', id: 'vidsrcto' },
     { name: 'Opción 2 (Latino/Dual)', id: '2embed' },
     { name: 'Opción 3 (Respaldo)', id: 'vidsrc' },
-    { name: 'Opción 4 (Multi)', id: 'superembed' }
+    { name: 'Opción 4 (Multi)', id: 'superembed' },
+    { name: '🔗 Link Propio', id: 'custom' }
   ];
+
+  customUrl: string = '';
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tmdbId'] || changes['type'] || changes['season'] || changes['episode']) {
-      this.updateUrl();
+      // If we are somewhat stuck on custom, don't auto-reset unless ID changes really
+      if (this.currentServer !== 'custom') {
+        this.updateUrl();
+      } else {
+        // If ID changed, we probably should reset to default server
+        if (changes['tmdbId']) {
+          this.currentServer = 'vidsrcto';
+          this.updateUrl();
+        }
+      }
     }
   }
 
   selectServer(serverId: string) {
     this.currentServer = serverId;
-    this.updateUrl();
+    if (serverId !== 'custom') {
+      this.updateUrl();
+    } else {
+      this.safeUrl = null; // Clear view for input
+    }
+  }
+
+  applyCustomUrl(url: string) {
+    if (!url) return;
+    this.customUrl = url;
+    // Basic validation or sanitization could go here
+    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.customUrl);
   }
 
   private updateUrl(): void {
@@ -157,6 +195,8 @@ export class MoviePlayer implements OnChanges {
         break;
     }
 
-    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    if (this.currentServer !== 'custom') {
+      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
   }
 }
