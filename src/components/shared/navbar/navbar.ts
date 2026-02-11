@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-navbar',
   imports: [RouterLink, RouterLinkActive, FormsModule, CommonModule],
-  template: `<nav class="fixed w-full z-50 top-0 bg-black/90 backdrop-blur-md border-b border-gray-800/50">
+  template: `<nav class="fixed w-full z-[100] top-0 bg-black/90 backdrop-blur-md border-b border-gray-800/50">
     <div class="max-w-screen-2xl mx-auto px-6 py-3.5">
       <div class="flex items-center justify-between">
         
@@ -120,12 +120,12 @@ import { CommonModule } from '@angular/common';
 
     <!-- Search Overlay Backdrop -->
     @if (showResults && searchQuery.trim().length > 0) {
-      <div class="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] transition-opacity duration-300" (mousedown)="showResults = false"></div>
+      <div class="fixed inset-0 bg-black/80 backdrop-blur-md z-40 transition-opacity duration-300" (mousedown)="showResults = false"></div>
     }
 
     <!-- Horizontal Search Results Tray (Bottom) -->
     @if (showResults && searchResults.length > 0) {
-      <div class="fixed bottom-0 left-0 w-full z-[70] bg-gradient-to-t from-black via-black/95 to-transparent pt-16 pb-10 px-8 animate-slide-up">
+      <div class="fixed bottom-0 left-0 w-full z-50 bg-gradient-to-t from-black via-black/95 to-transparent pt-16 pb-10 px-8 animate-slide-up">
         <div class="max-w-screen-2xl mx-auto">
           <div class="flex items-center justify-between mb-6 px-2">
             <div>
@@ -179,7 +179,7 @@ import { CommonModule } from '@angular/common';
 
     <!-- No Results Message -->
     @if (showResults && searchQuery.trim().length > 0 && searchResults.length === 0 && !isSearching) {
-      <div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-[70] bg-black/80 backdrop-blur-xl border border-white/10 px-10 py-4 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] text-gray-200 text-lg font-bold animate-slide-up">
+      <div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-black/80 backdrop-blur-xl border border-white/10 px-10 py-4 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] text-gray-200 text-lg font-bold animate-slide-up">
         Vaya, no hemos encontrado nada para "<span class="text-yellow-400 italic">{{ searchQuery }}</span>"
       </div>
     }
