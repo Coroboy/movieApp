@@ -9,7 +9,7 @@ import { MovieCard } from '../../components/movie-card/movie-card';
   imports: [MovieCard],
   template: `
     <div class="container mx-auto px-4 py-8 min-h-screen">
-      <h2 class="text-3xl font-bold text-gray-100 mb-6 drop-shadow-lg">Resultados para: <span class="text-yellow-400">"{{ query }}"</span></h2>
+      <h2 class="text-3xl font-bold text-slate-800 mb-6 transition-colors">Resultados para: <span class="text-slate-600 italic">"{{ query }}"</span></h2>
       
       @if (results.length > 0) {
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
