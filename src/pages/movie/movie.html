@@ -35,13 +35,17 @@
         <div class="flex-1 space-y-6">
 
             <div>
-                <div class="flex flex-wrap items-center gap-4">
-                    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
-                        {{ movie.title }}
-                        <span class="text-3xl md:text-4xl font-light text-gray-400 ml-2">({{ movie.release_date |
-                            date:'yyyy'
-                            }})</span>
-                    </h1>
+                <!-- Title Section -->
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight mb-4">
+                    {{ movie.title }}
+                    <span class="text-3xl md:text-4xl font-light text-gray-400 ml-2">({{ movie.release_date |
+                        date:'yyyy'
+                        }})</span>
+                </h1>
+
+                <!-- Action Buttons Row -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Favorite Button -->
                     <button (click)="toggleFavorite()"
                         class="p-3 rounded-full bg-white/10 hover:bg-yellow-400/20 hover:scale-110 transition-all duration-300 flex-shrink-0 group cursor-pointer"
                         [title]="isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'">
