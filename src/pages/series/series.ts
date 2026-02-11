@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { GENRE_MAP, GenreGroup } from '../../app/constants/genres';
 import { forkJoin } from 'rxjs';
+import { HeroCarousel } from '../../components/hero-carousel/hero-carousel';
 
 @Component({
   selector: 'app-series',
-  imports: [MovieCard, CommonModule],
+  imports: [MovieCard, CommonModule, HeroCarousel],
   templateUrl: './series.html',
   styles: `
     :host {
