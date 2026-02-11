@@ -25,13 +25,46 @@
             </button>
             }
 
-            <a [href]="'https://vidlink.pro/tv/' + serie.id" target="_blank"
-                class="w-full mt-3 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-colors cursor-pointer text-center">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                </svg>
-                Reproducir
-            </a>
+            <!-- Multiple Streaming Servers -->
+            <div class="w-full mt-4 space-y-2">
+                <p class="text-sm text-gray-300 font-semibold mb-3">🎬 Elige tu servidor de reproducción:</p>
+
+                <!-- Server 1: VidSrc.to -->
+                <a [href]="'https://vidsrc.to/embed/tv/' + serie.id" target="_blank"
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-colors cursor-pointer">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    Servidor 1 - VidSrc
+                </a>
+
+                <!-- Server 2: VidSrc.me -->
+                <a [href]="'https://vidsrc.me/embed/tv?tmdb=' + serie.id" target="_blank"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-colors cursor-pointer">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    Servidor 2 - VidSrc Pro
+                </a>
+
+                <!-- Server 3: 2Embed -->
+                <a [href]="'https://www.2embed.cc/embedtv/' + serie.id" target="_blank"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-colors cursor-pointer">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    Servidor 3 - 2Embed
+                </a>
+
+                <!-- Server 4: VidLink -->
+                <a [href]="'https://vidlink.pro/tv/' + serie.id" target="_blank"
+                    class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-colors cursor-pointer">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    Servidor 4 - VidLink
+                </a>
+            </div>
         </div>
 
         <div class="flex-1 space-y-6">
