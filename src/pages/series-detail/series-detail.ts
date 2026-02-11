@@ -31,6 +31,7 @@ export class SeriesDetail {
     recommendations: Result[] = []
     trailerKey: string | null = null
     showTrailer = false
+    showAllRecommendations = false
 
     // Season and Episode selection
     selectedSeason: Season | null = null;
@@ -177,6 +178,10 @@ export class SeriesDetail {
             },
             error: (err) => console.log('Error recommendations', err)
         });
+    }
+
+    toggleRecommendations() {
+        this.showAllRecommendations = !this.showAllRecommendations;
     }
 
     // Share functionality

@@ -30,6 +30,7 @@ export class Movie {
   recommendations: Result[] = []
   trailerKey: string | null = null
   showTrailer = false
+  showAllRecommendations = false
 
   constructor() {
     this.activeRoute.params.subscribe(params => {
@@ -146,6 +147,10 @@ export class Movie {
       },
       error: (err) => console.log('Error recommendations', err)
     })
+  }
+
+  toggleRecommendations() {
+    this.showAllRecommendations = !this.showAllRecommendations;
   }
 
   // Share functionality

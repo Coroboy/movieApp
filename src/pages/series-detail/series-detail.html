@@ -16,12 +16,20 @@
                 [src]="'https://image.tmdb.org/t/p/w500' + serie.poster_path" [alt]="serie.name || serie.title">
 
             <button (click)="openTrailer()" [disabled]="!trailerKey"
-                class="w-full mt-4 bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
+                class="w-full mt-4 bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                 </svg>
                 {{ trailerKey ? 'Ver Trailer' : 'Trailer no disponible' }}
             </button>
+
+            <a [href]="'https://vidlink.pro/tv/' + serie.id" target="_blank"
+                class="w-full mt-3 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-colors cursor-pointer text-center">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                </svg>
+                Reproducir
+            </a>
         </div>
 
         <div class="flex-1 space-y-6">
@@ -246,10 +254,19 @@
         <h2 class="text-3xl font-bold mb-6">Recomendaciones</h2>
         @if (recommendations.length > 0) {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            @for (rec of recommendations; track rec.id) {
+            @for (rec of recommendations.slice(0, showAllRecommendations ? recommendations.length : 4); track rec.id) {
             <app-movie-card [movie]="rec" [type]="'tv'" [isCompact]="true"></app-movie-card>
             }
         </div>
+
+        @if (recommendations.length > 4) {
+        <div class="flex justify-center mt-8">
+            <button (click)="toggleRecommendations()"
+                class="bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-8 rounded-full border border-white/20 transition-all cursor-pointer">
+                {{ showAllRecommendations ? 'Ver menos' : 'Cargar más' }}
+            </button>
+        </div>
+        }
         } @else {
         <div class="bg-white/5 rounded-lg p-8 text-center">
             <p class="text-gray-400 text-lg">No hay recomendaciones disponibles para esta serie.</p>
