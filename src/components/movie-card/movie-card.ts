@@ -21,10 +21,13 @@ import { CommonModule } from '@angular/common';
         </svg>
       </button>
 
-      <!-- Poster Image with Natural Aspect Ratio -->
-      <img class="w-full h-auto object-cover transition-all duration-700 group-hover:scale-110" 
-           [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path" 
-           [alt]="movie.title || movie.name"/>
+
+      <!-- Poster Image - Full Coverage with Fixed Aspect Ratio -->
+      <div class="relative w-full aspect-[2/3] overflow-hidden">
+        <img class="absolute inset-0 w-full h-full object-cover scale-105 transition-all duration-700 group-hover:scale-[1.15]" 
+             [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path" 
+             [alt]="movie.title || movie.name"/>
+      </div>
 
       <!-- Elegant Hover Overlay -->
       <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-5">
