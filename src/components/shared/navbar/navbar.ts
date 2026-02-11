@@ -81,120 +81,154 @@ import { CommonModule } from '@angular/common';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
 
-            <!-- Live Search Results Dropdown -->
-            @if (showResults && searchResults.length > 0) {
-              <div class="absolute top-full mt-2 w-full bg-gray-900 border border-gray-700 rounded-lg shadow-2xl max-h-96 overflow-y-auto">
-                @for (result of searchResults; track result.id) {
-                  <a (mousedown)="navigateToResult(result)" 
-                     class="flex items-center gap-3 p-3 hover:bg-gray-800 transition-colors cursor-pointer border-b border-gray-800 last:border-0">
+      <!-- Search Overlay Backdrop -->
+      @if (showResults && searchQuery.trim().length > 0) {
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300" (mousedown)="showResults = false"></div>
+      }
+
+      <!-- Horizontal Search Results Tray (Bottom) -->
+      @if (showResults && searchResults.length > 0) {
+        <div class="fixed bottom-0 left-0 w-full z-50 bg-gradient-to-t from-black via-black/95 to-transparent pt-10 pb-8 px-6 animate-slide-up">
+          <div class="max-w-screen-2xl mx-auto">
+            <div class="flex items-center justify-between mb-4 px-2">
+              <h3 class="text-white font-bold text-lg flex items-center gap-2">
+                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"></path>
+                </svg>
+                Resultados para "{{ searchQuery }}"
+              </h3>
+              <button (click)="search()" class="text-yellow-400 hover:text-yellow-300 text-sm font-bold transition-colors">
+                Ver todos los resultados →
+              </button>
+            </div>
+
+            <!-- Horizontal Scroll Container -->
+            <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
+              @for (result of searchResults; track result.id) {
+                <div (mousedown)="navigateToResult(result)" 
+                     class="flex-shrink-0 w-40 snap-start group/item cursor-pointer">
+                  <div class="relative aspect-[2/3] rounded-lg overflow-hidden border border-gray-800 group-hover/item:border-yellow-400/50 shadow-xl transition-all duration-300 transform group-hover/item:-translate-y-2">
                     @if (result.poster_path) {
-                      <img [src]="'https://image.tmdb.org/t/p/w92' + result.poster_path" 
+                      <img [src]="'https://image.tmdb.org/t/p/w342' + result.poster_path" 
                            [alt]="result.title || result.name"
-                           class="w-12 h-16 object-cover rounded">
+                           class="w-full h-full object-cover">
                     } @else {
-                      <div class="w-12 h-16 bg-gray-700 rounded flex items-center justify-center">
-                        <svg class="w-6 h-6 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                      <div class="w-full h-full bg-gray-800 flex items-center justify-center">
+                        <svg class="w-12 h-12 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>
                         </svg>
                       </div>
                     }
-                    <div class="flex-1 min-w-0">
-                      <p class="text-white font-semibold text-sm truncate">
-                        {{ result.title || result.name }}
-                      </p>
-                      <p class="text-gray-400 text-xs">
-                        {{ result.media_type === 'movie' ? 'Película' : 'Serie' }} 
-                        @if (result.release_date || result.first_air_date) {
-                          · {{ (result.release_date || result.first_air_date) | date:'yyyy' }}
-                        }
-                      </p>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
+                    <div class="absolute bottom-2 left-2 right-2">
+                      <p class="text-white text-xs font-bold truncate">{{ result.title || result.name }}</p>
+                      <div class="flex items-center justify-between mt-1">
+                        <span class="text-[10px] text-gray-400">{{ result.media_type === 'movie' ? 'Película' : 'Serie' }}</span>
+                        <span class="flex items-center gap-0.5 text-yellow-400 text-[10px] font-bold">
+                          ★ {{ result.vote_average | number:'1.1-1' }}
+                        </span>
+                      </div>
                     </div>
-                    <div class="flex items-center gap-1 text-yellow-400 text-xs">
-                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                      </svg>
-                      {{ result.vote_average | number:'1.1-1' }}
-                    </div>
-                  </a>
-                }
-              </div>
-            }
-            @if (showResults && searchQuery.trim().length > 0 && searchResults.length === 0 && !isSearching) {
-              <div class="absolute top-full mt-2 w-full bg-gray-900 border border-gray-700 rounded-lg shadow-2xl p-4 text-center text-gray-400">
-                No se encontraron resultados
-              </div>
-            }
-          </div>
-
-          <!-- Mobile Menu Button -->
-          <button 
-            data-collapse-toggle="navbar-sticky" 
-            type="button" 
-            class="md:hidden p-2.5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg focus:outline-none transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Mobile Menu -->
-      <div class="hidden md:hidden mt-4 pb-2" id="navbar-sticky">
-        <ul class="flex flex-col space-y-1">
-          <li>
-            <a routerLink="/home" routerLinkActive="text-white bg-white/15 font-bold"
-               class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">
-              HOME
-            </a>
-          </li>
-          <li>
-            <a routerLink="/funciones" routerLinkActive="text-white bg-white/15 font-bold"
-               class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">
-              FUNCIONES
-            </a>
-          </li>
-          <li>
-            <a routerLink="/cartelera" routerLinkActive="text-white bg-white/15 font-bold"
-               class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">
-              CARTELERA
-            </a>
-          </li>
-          <li>
-            <a routerLink="/estrenos" routerLinkActive="text-white bg-white/15 font-bold"
-               class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">
-              ESTRENOS
-            </a>
-          </li>
-          <li>
-            <a routerLink="/series" routerLinkActive="text-white bg-white/15 font-bold"
-               class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">
-              SERIES
-            </a>
-          </li>
-          <li>
-            <a routerLink="/favoritos" routerLinkActive="text-white bg-white/15 font-bold"
-               class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">
-              FAVORITOS
-            </a>
-          </li>
-          <li>
-            <div class="px-4 py-2 mt-2">
-              <input 
-                type="text" 
-                [(ngModel)]="searchQuery" 
-                (input)="onSearchInput()"
-                (keyup.enter)="search()"
-                placeholder="Buscar..."
-                class="w-full bg-white/5 border-2 border-gray-700/50 text-white placeholder-gray-400 rounded-lg px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-yellow-400 focus:bg-white/10">
+                  </div>
+                </div>
+              }
             </div>
-          </li>
-        </ul>
-      </div>
+          </div>
+        </div>
+      }
+
+      <!-- No Results Message -->
+      @if (showResults && searchQuery.trim().length > 0 && searchResults.length === 0 && !isSearching) {
+        <div class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 backdrop-blur-md border border-gray-700 px-6 py-3 rounded-full shadow-2xl text-gray-300 text-sm">
+          No se encontraron resultados para "{{ searchQuery }}"
+        </div>
+      }
     </div>
+  </nav>`,
+
+          < !--Mobile Menu Button-- >
+<button 
+            data - collapse - toggle="navbar-sticky" 
+            type = "button" 
+            class= "md:hidden p-2.5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg focus:outline-none transition-colors" >
+  <svg class="w-6 h-6" fill = "none" stroke = "currentColor" viewBox = "0 0 24 24" stroke - width="2.5" >
+<path stroke - linecap="round" stroke - linejoin="round" d = "M4 6h16M4 12h16M4 18h16" > </path>
+</svg>
+</button>
+</div>
+</div>
+
+< !--Mobile Menu-- >
+<div class="hidden md:hidden mt-4 pb-2" id = "navbar-sticky" >
+<ul class="flex flex-col space-y-1" >
+<li>
+<a routerLink="/home" routerLinkActive = "text-white bg-white/15 font-bold"
+               class= "block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold" >
+  HOME
+  </a>
+  </li>
+  < li >
+  <a routerLink="/funciones" routerLinkActive = "text-white bg-white/15 font-bold"
+               class= "block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold" >
+  FUNCIONES
+  </a>
+  </li>
+  < li >
+  <a routerLink="/cartelera" routerLinkActive = "text-white bg-white/15 font-bold"
+               class= "block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold" >
+  CARTELERA
+  </a>
+  </li>
+  < li >
+  <a routerLink="/estrenos" routerLinkActive = "text-white bg-white/15 font-bold"
+               class= "block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold" >
+  ESTRENOS
+  </a>
+  </li>
+  < li >
+  <a routerLink="/series" routerLinkActive = "text-white bg-white/15 font-bold"
+               class= "block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold" >
+  SERIES
+  </a>
+  </li>
+  < li >
+  <a routerLink="/favoritos" routerLinkActive = "text-white bg-white/15 font-bold"
+               class= "block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold" >
+  FAVORITOS
+  </a>
+  </li>
+  < li >
+  <div class="px-4 py-2 mt-2" >
+<input 
+                type="text"
+[(ngModel)] = "searchQuery"
+  (input) = "onSearchInput()"
+    (keyup.enter) = "search()"
+                placeholder = "Buscar..."
+                class= "w-full bg-white/5 border-2 border-gray-700/50 text-white placeholder-gray-400 rounded-lg px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-yellow-400 focus:bg-white/10" >
+  </div>
+  </li>
+  </ul>
+  </div>
+  </div>
   </nav>`,
   styles: `
       :host {
         display: block;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      @keyframes slide-up {
+        from { transform: translateY(100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .animate-slide-up {
+        animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       }
     `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -240,7 +274,7 @@ export class Navbar {
     if (this.searchQuery.trim().length > 0) {
       this.movieService.searchMovies(this.searchQuery, 1).subscribe({
         next: (response) => {
-          this.searchResults = response.results.slice(0, 8); // Show top 8 results
+          this.searchResults = response.results.slice(0, 20); // Show up to 20 results for horizontal scrolling
           this.isSearching = false;
         },
         error: (err) => {

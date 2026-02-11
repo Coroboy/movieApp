@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <div (click)="navigateToMovie()" 
-         class="group relative overflow-hidden rounded-xl bg-gray-900 shadow-lg transition-all duration-500 hover:scale-105 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] cursor-pointer aspect-[2/3]">
+         class="group relative overflow-hidden rounded-xl bg-gray-900 shadow-lg transition-all duration-500 hover:scale-110 hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)] hover:ring-2 hover:ring-yellow-400/50 cursor-pointer aspect-[2/3] z-0 hover:z-50">
       
       <!-- Favorite Button -->
       <button (click)="toggleFavorite($event)" 
@@ -22,12 +22,12 @@ import { CommonModule } from '@angular/common';
       </button>
 
       <!-- Poster Image -->
-      <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+      <img class="w-full h-full object-cover transition-all duration-700" 
            [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path" 
            [alt]="movie.title || movie.name"/>
 
       <!-- Elegant Hover Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-5">
+      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-5">
         <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
           <h5 class="text-xl font-bold text-white mb-2 leading-tight drop-shadow-md">
             {{ movie.title || movie.name }}
