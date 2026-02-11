@@ -4,9 +4,9 @@ import { Result } from '../../app/interfaces/interface';
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-hero-carousel',
-    imports: [CommonModule],
-    template: `
+  selector: 'app-hero-carousel',
+  imports: [CommonModule],
+  template: `
     <div class="relative w-full h-[500px] md:h-[600px] overflow-hidden bg-black"
          (mouseenter)="pauseAutoPlay()" 
          (mouseleave)="resumeAutoPlay()">
@@ -95,75 +95,81 @@ import { CommonModule } from '@angular/common';
         @for (item of items; track item.id; let i = $index) {
           <button
             (click)="goToSlide(i); $event.stopPropagation()"
-            class="transition-all duration-300"
+            class="h-3 rounded-full transition-all duration-500 ease-in-out transform"
             [class.w-10]="currentIndex === i"
             [class.w-3]="currentIndex !== i"
             [class.bg-yellow-400]="currentIndex === i"
-            [class.bg-white/50]="currentIndex !== i"
-            [class.hover:bg-white]="currentIndex !== i"
-            [class.hover:scale-110]="currentIndex !== i"
-            class="h-3 rounded-full">
+            [class.bg-white/40]="currentIndex !== i"
+            [class.shadow-lg]="currentIndex === i"
+            [class.shadow-yellow-400/50]="currentIndex === i"
+            [class.opacity-100]="currentIndex === i"
+            [class.opacity-60]="currentIndex !== i"
+            [class.hover:bg-white/80]="currentIndex !== i"
+            [class.hover:opacity-100]="currentIndex !== i"
+            [class.hover:scale-125]="currentIndex !== i"
+            [attr.aria-label]="'Ir a slide ' + (i + 1)"
+            [attr.aria-current]="currentIndex === i ? 'true' : 'false'">
           </button>
         }
       </div>
     </div>
   `,
-    styles: `
+  styles: `
     :host {
       display: block;
     }
   `,
-    changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class HeroCarousel implements OnInit, OnDestroy {
-    @Input({ required: true }) items!: Result[];
+  @Input({ required: true }) items!: Result[];
 
-    currentIndex = 0;
-    autoPlayInterval: any;
-    router = inject(Router);
+  currentIndex = 0;
+  autoPlayInterval: any;
+  router = inject(Router);
 
-    ngOnInit() {
-        this.startAutoPlay();
+  ngOnInit() {
+    this.startAutoPlay();
+  }
+
+  ngOnDestroy() {
+    this.stopAutoPlay();
+  }
+
+  startAutoPlay() {
+    this.autoPlayInterval = setInterval(() => {
+      this.nextSlide();
+    }, 5000);
+  }
+
+  stopAutoPlay() {
+    if (this.autoPlayInterval) {
+      clearInterval(this.autoPlayInterval);
     }
+  }
 
-    ngOnDestroy() {
-        this.stopAutoPlay();
-    }
+  pauseAutoPlay() {
+    this.stopAutoPlay();
+  }
 
-    startAutoPlay() {
-        this.autoPlayInterval = setInterval(() => {
-            this.nextSlide();
-        }, 5000);
-    }
+  resumeAutoPlay() {
+    this.startAutoPlay();
+  }
 
-    stopAutoPlay() {
-        if (this.autoPlayInterval) {
-            clearInterval(this.autoPlayInterval);
-        }
-    }
+  nextSlide() {
+    this.currentIndex = (this.currentIndex + 1) % this.items.length;
+  }
 
-    pauseAutoPlay() {
-        this.stopAutoPlay();
-    }
+  prevSlide() {
+    this.currentIndex = this.currentIndex === 0 ? this.items.length - 1 : this.currentIndex - 1;
+  }
 
-    resumeAutoPlay() {
-        this.startAutoPlay();
-    }
+  goToSlide(index: number) {
+    this.currentIndex = index;
+  }
 
-    nextSlide() {
-        this.currentIndex = (this.currentIndex + 1) % this.items.length;
-    }
-
-    prevSlide() {
-        this.currentIndex = this.currentIndex === 0 ? this.items.length - 1 : this.currentIndex - 1;
-    }
-
-    goToSlide(index: number) {
-        this.currentIndex = index;
-    }
-
-    navigateToDetail(item: Result) {
-        const type = item.media_type === 'movie' ? 'movie' : 'series';
-        this.router.navigate([`/${type}`, item.id]);
-    }
+  navigateToDetail(item: Result) {
+    const type = item.media_type === 'movie' ? 'movie' : 'series';
+    this.router.navigate([`/${type}`, item.id]);
+  }
 }
