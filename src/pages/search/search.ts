@@ -5,67 +5,70 @@ import { Result } from '../../app/interfaces/interface';
 import { MovieCard } from '../../components/movie-card/movie-card';
 
 @Component({
-    selector: 'app-search',
-    imports: [MovieCard],
-    template: `
-    <div class="container mx-auto px-4 py-8">
-      <h2 class="text-3xl font-bold text-white mb-6">Resultados para: <span class="text-brand">{{ query }}</span></h2>
+  selector: 'app-search',
+  imports: [MovieCard],
+  template: `
+    <div class="container mx-auto px-4 py-8 min-h-screen">
+      <h2 class="text-3xl font-bold text-gray-100 mb-6 drop-shadow-lg">Resultados para: <span class="text-yellow-400">"{{ query }}"</span></h2>
       
       @if (results.length > 0) {
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
           @for (item of results; track item.id) {
             <app-movie-card [movie]="item" [type]="item.media_type === 'tv' ? 'tv' : 'movie'"></app-movie-card>
           }
         </div>
         
-        <div class="flex justify-center mt-8 mb-8">
-            <button (click)="cargarMas()" class="bg-brand hover:bg-brand-strong text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105">
-                Cargar más resultados
+        <div class="flex justify-center mt-12 mb-8">
+            <button (click)="cargarMas()" class="bg-yellow-500 hover:bg-yellow-600 text-black font-extrabold py-3 px-10 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.5)] transition-all transform hover:scale-105 active:scale-95">
+                Ver más resultados
             </button>
         </div>
       } @else {
-        <div class="text-center py-20">
-          <p class="text-2xl text-gray-400">No se encontraron resultados.</p>
+        <div class="text-center py-24 bg-white/5 rounded-2xl border border-white/10">
+          <svg class="w-16 h-16 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <p class="text-2xl text-gray-400 font-medium">No se encontraron resultados para su búsqueda.</p>
         </div>
       }
     </div>
   `,
-    styles: `
+  styles: `
     :host {
       display: block;
     }
   `,
-    changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class Search {
-    activeRoute = inject(ActivatedRoute)
-    movieS = inject(MovieService)
-    query: string = ''
-    results: Result[] = []
-    page = 1
+  activeRoute = inject(ActivatedRoute)
+  movieS = inject(MovieService)
+  query: string = ''
+  results: Result[] = []
+  page = 1
 
-    constructor() {
-        this.activeRoute.params.subscribe(params => {
-            this.query = params['query'];
-            this.page = 1;
-            this.results = [];
-            this.buscar();
-        });
-    }
+  constructor() {
+    this.activeRoute.params.subscribe(params => {
+      this.query = params['query'];
+      this.page = 1;
+      this.results = [];
+      this.buscar();
+    });
+  }
 
-    buscar() {
-        if (this.query) {
-            this.movieS.searchMovies(this.query, this.page).subscribe({
-                next: (res) => {
-                    this.results = [...this.results, ...res.results]
-                },
-                error: (err) => console.log(err)
-            })
-        }
+  buscar() {
+    if (this.query) {
+      this.movieS.searchMovies(this.query, this.page).subscribe({
+        next: (res) => {
+          this.results = [...this.results, ...res.results]
+        },
+        error: (err) => console.log(err)
+      })
     }
+  }
 
-    cargarMas() {
-        this.page++
-        this.buscar()
-    }
+  cargarMas() {
+    this.page++
+    this.buscar()
+  }
 }
