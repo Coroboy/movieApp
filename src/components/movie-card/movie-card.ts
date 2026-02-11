@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <div (click)="navigateToMovie()" 
-         class="group relative overflow-hidden rounded-xl bg-gray-900 shadow-lg transition-all duration-500 cursor-pointer hover:z-50 hover:scale-105 hover:shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:ring-2 hover:ring-yellow-400/40">
+         class="group relative overflow-hidden rounded-xl bg-gray-900 shadow-lg transition-all duration-500 cursor-pointer hover:z-50 hover:shadow-2xl hover:ring-2 hover:ring-yellow-400/40">
       
       <!-- Favorite Button -->
       <button (click)="toggleFavorite($event)" 
@@ -22,7 +22,7 @@ import { CommonModule } from '@angular/common';
       </button>
 
       <!-- Poster Image with Natural Aspect Ratio -->
-      <img class="w-full h-auto object-cover transition-all duration-700" 
+      <img class="w-full h-auto object-cover transition-all duration-700 group-hover:scale-110" 
            [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path" 
            [alt]="movie.title || movie.name"/>
 
