@@ -67,19 +67,58 @@ import { CommonModule } from '@angular/common';
 
         <!-- Search Bar -->
         <div class="flex items-center space-x-4">
-          <div class="relative hidden md:block">
+          <div class="relative hidden md:block group">
             <input 
               type="text" 
               [(ngModel)]="searchQuery" 
               (input)="onSearchInput()"
+              (focus)="showDropdown = true"
+              (blur)="hideDropdownDelayed()"
               (keyup.enter)="search()"
-              (focus)="showResults = true"
-              (blur)="hideResultsDelayed()"
               placeholder="Buscar películas, series..."
               class="w-72 bg-white/5 border-2 border-gray-700/50 text-white placeholder-gray-400 rounded-lg px-4 py-2.5 pl-11 text-sm font-medium focus:outline-none focus:border-yellow-400 focus:bg-white/10 transition-all backdrop-blur-sm shadow-lg">
             <svg class="w-5 h-5 text-gray-300 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
+
+            <!-- Vertical Search Dropdown -->
+            @if (showDropdown && searchResults.length > 0 && searchQuery.length > 0) {
+              <div class="absolute top-full left-0 right-0 mt-2 bg-gray-900/95 backdrop-blur-xl border border-gray-700 rounded-xl shadow-2xl overflow-hidden max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent z-[70]">
+                @for (result of searchResults; track result.id) {
+                  <div (click)="navigateToResult(result)" class="flex items-center gap-3 p-3 hover:bg-white/10 transition-colors cursor-pointer border-b border-white/5 last:border-0 group/item">
+                    <!-- Thumbnail -->
+                    <div class="flex-shrink-0 w-12 h-16 rounded-md overflow-hidden bg-gray-800 shadow-md">
+                      @if (result.poster_path) {
+                        <img [src]="'https://image.tmdb.org/t/p/w92' + result.poster_path" 
+                             class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-300">
+                      } @else {
+                        <div class="w-full h-full flex items-center justify-center">
+                          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                      }
+                    </div>
+                    
+                    <!-- Info -->
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-white text-sm font-bold truncate group-hover/item:text-yellow-400 transition-colors">{{ result.title || result.name }}</h4>
+                      <div class="flex items-center gap-2 mt-1">
+                        <span class="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-gray-300 font-semibold">{{ result.media_type === 'movie' ? 'PELÍCULA' : 'SERIE' }}</span>
+                        <span class="text-xs text-gray-400">{{ (result.release_date || result.first_air_date) | date:'yyyy' }}</span>
+                        <span class="text-xs text-yellow-500 font-bold flex items-center gap-0.5">
+                          ★ {{ result.vote_average | number:'1.1-1' }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                }
+                
+                <div class="p-2 bg-white/5 text-center">
+                  <button (click)="search()" class="text-xs text-yellow-400 hover:text-yellow-300 font-bold uppercase tracking-wide py-1">
+                    Ver todos los resultados
+                  </button>
+                </div>
+              </div>
+            }
           </div>
 
           <!-- Mobile Menu Button -->
@@ -108,7 +147,6 @@ import { CommonModule } from '@angular/common';
               <input 
                 type="text" 
                 [(ngModel)]="searchQuery" 
-                (input)="onSearchInput()"
                 (keyup.enter)="search()"
                 placeholder="Buscar..."
                 class="w-full bg-white/5 border-2 border-gray-700/50 text-white placeholder-gray-400 rounded-lg px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-yellow-400 focus:bg-white/10">
@@ -117,90 +155,10 @@ import { CommonModule } from '@angular/common';
         </ul>
       </div>
     </div>
-
-    <!-- Search Overlay Backdrop -->
-    @if (showResults && searchQuery.trim().length > 0) {
-      <div class="fixed inset-0 bg-black/80 backdrop-blur-md z-40 transition-opacity duration-300" (mousedown)="showResults = false"></div>
-    }
-
-    <!-- Horizontal Search Results Tray (Bottom) -->
-    @if (showResults && searchResults.length > 0) {
-      <div class="fixed bottom-0 left-0 w-full z-50 bg-gradient-to-t from-black via-black/95 to-transparent pt-16 pb-10 px-8 animate-slide-up">
-        <div class="max-w-screen-2xl mx-auto">
-          <div class="flex items-center justify-between mb-6 px-2">
-            <div>
-              <h3 class="text-white font-black text-2xl tracking-tight flex items-center gap-3">
-                <span class="w-1.5 h-8 bg-yellow-400 rounded-full"></span>
-                Resultados para "<span class="text-yellow-400 italic">{{ searchQuery }}</span>"
-              </h3>
-            </div>
-            <button (click)="search()" class="px-6 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white font-bold transition-all transform hover:scale-105">
-              Ver todos ({{ searchResults.length }})
-            </button>
-          </div>
-
-          <!-- Horizontal Scroll Container -->
-          <div class="flex gap-6 overflow-x-auto pb-6 scrollbar-hide snap-x">
-            @for (result of searchResults; track result.id) {
-              <div (mousedown)="navigateToResult(result)" 
-                   class="flex-shrink-0 w-48 snap-start group/item cursor-pointer">
-                <div class="relative aspect-[2/3] rounded-2xl overflow-hidden border border-white/5 group-hover/item:border-yellow-400 shadow-2xl transition-all duration-500 transform group-hover/item:-translate-y-4">
-                  @if (result.poster_path) {
-                    <img [src]="'https://image.tmdb.org/t/p/w342' + result.poster_path" 
-                         [alt]="result.title || result.name"
-                         class="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-105">
-                  } @else {
-                    <div class="w-full h-full bg-gray-800 flex items-center justify-center">
-                      <svg class="w-16 h-16 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>
-                      </svg>
-                    </div>
-                  }
-                  
-                  <!-- Quality Overlay -->
-                  <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
-                  
-                  <div class="absolute bottom-4 left-4 right-4 translate-y-2 group-hover/item:translate-y-0 transition-transform">
-                    <p class="text-white text-sm font-black leading-tight drop-shadow-lg line-clamp-2">{{ result.title || result.name }}</p>
-                    <div class="flex items-center justify-between mt-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                      <span class="text-[10px] uppercase tracking-widest text-gray-400 font-black">{{ result.media_type === 'movie' ? 'Cine' : 'Serie' }}</span>
-                      <span class="flex items-center gap-1 text-yellow-400 text-xs font-black">
-                        ★ {{ result.vote_average | number:'1.1-1' }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-    }
-
-    <!-- No Results Message -->
-    @if (showResults && searchQuery.trim().length > 0 && searchResults.length === 0 && !isSearching) {
-      <div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-black/80 backdrop-blur-xl border border-white/10 px-10 py-4 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] text-gray-200 text-lg font-bold animate-slide-up">
-        Vaya, no hemos encontrado nada para "<span class="text-yellow-400 italic">{{ searchQuery }}</span>"
-      </div>
-    }
   </nav>`,
   styles: `
       :host {
         display: block;
-      }
-      .scrollbar-hide::-webkit-scrollbar {
-        display: none;
-      }
-      .scrollbar-hide {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
-      @keyframes slide-up {
-        from { transform: translateY(100%); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-      }
-      .animate-slide-up {
-        animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1);
       }
     `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -208,8 +166,7 @@ import { CommonModule } from '@angular/common';
 export class Navbar {
   searchQuery: string = '';
   searchResults: Result[] = [];
-  showResults: boolean = false;
-  isSearching: boolean = false;
+  showDropdown: boolean = false;
   mobileMenuOpen: boolean = false;
   searchTimeout: any;
 
@@ -221,39 +178,27 @@ export class Navbar {
   }
 
   onSearchInput() {
-    // Clear previous timeout
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
-    }
+    if (this.searchTimeout) clearTimeout(this.searchTimeout);
 
-    // If query is empty, clear results
     if (this.searchQuery.trim().length === 0) {
       this.searchResults = [];
-      this.showResults = false;
+      this.showDropdown = false;
       return;
     }
 
-    // Show results and set searching state
-    this.showResults = true;
-    this.isSearching = true;
-
-    // Debounce search by 150ms for faster response
+    this.showDropdown = true;
     this.searchTimeout = setTimeout(() => {
       this.performSearch();
-    }, 150);
+    }, 300);
   }
 
   performSearch() {
     if (this.searchQuery.trim().length > 0) {
       this.movieService.searchMovies(this.searchQuery, 1).subscribe({
         next: (response) => {
-          this.searchResults = response.results.slice(0, 20); // Show up to 20 results for horizontal scrolling
-          this.isSearching = false;
+          this.searchResults = response.results.slice(0, 5); // Limit to 5 results for vertical dropdown
         },
-        error: (err) => {
-          console.log('Search error', err);
-          this.isSearching = false;
-        }
+        error: (err) => console.log(err)
       });
     }
   }
@@ -261,10 +206,8 @@ export class Navbar {
   search() {
     if (this.searchQuery.trim().length > 0) {
       this.router.navigate(['/search', this.searchQuery]);
-      this.searchQuery = '';
-      this.searchResults = [];
-      this.showResults = false;
       this.mobileMenuOpen = false;
+      this.hideDropdown();
     }
   }
 
@@ -273,14 +216,18 @@ export class Navbar {
     this.router.navigate([`/${type}`, result.id]);
     this.searchQuery = '';
     this.searchResults = [];
-    this.showResults = false;
+    this.showDropdown = false;
     this.mobileMenuOpen = false;
   }
 
-  hideResultsDelayed() {
-    // Delay hiding to allow click events on results
+  hideDropdownDelayed() {
     setTimeout(() => {
-      this.showResults = false;
-    }, 250);
+      this.showDropdown = false;
+    }, 200);
+  }
+
+  hideDropdown() {
+    this.showDropdown = false;
+    this.searchResults = [];
   }
 }
