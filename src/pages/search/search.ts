@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MovieService } from '../../app/services/movieService';
 import { Result } from '../../app/interfaces/interface';
 import { MovieCard } from '../../components/movie-card/movie-card';
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-search',
@@ -43,15 +44,27 @@ import { MovieCard } from '../../components/movie-card/movie-card';
 export class Search {
   activeRoute = inject(ActivatedRoute)
   movieS = inject(MovieService)
+  meta = inject(Meta)
+  titleService = inject(Title)
   query: string = ''
   results: Result[] = []
   page = 1
+
+  updateMetaTags() {
+    const title = `Resultados para "${this.query}" - movieApp`;
+    const description = `Explora los resultados de búsqueda para "${this.query}" en movieApp. Encuentra películas y series.`;
+    this.titleService.setTitle(title);
+    this.meta.updateTag({ name: 'description', content: description });
+    this.meta.updateTag({ property: 'og:title', content: title });
+    this.meta.updateTag({ property: 'og:description', content: description });
+  }
 
   constructor() {
     this.activeRoute.params.subscribe(params => {
       this.query = params['query'];
       this.page = 1;
       this.results = [];
+      this.updateMetaTags();
       this.buscar();
     });
   }
@@ -60,7 +73,8 @@ export class Search {
     if (this.query) {
       this.movieS.searchMovies(this.query, this.page).subscribe({
         next: (res) => {
-          this.results = [...this.results, ...res.results]
+          const filteredResults = this.movieS.filterResults(res.results);
+          this.results = [...this.results, ...filteredResults]
         },
         error: (err) => console.log(err)
       })

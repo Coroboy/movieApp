@@ -92,17 +92,21 @@ export class Movie {
     if (!this.movie) return;
 
     const title = `${this.movie.title} - movieApp`;
-    const description = this.movie.overview;
-    const image = `https://image.tmdb.org/t/p/w500${this.movie.backdrop_path}`;
+    const description = this.movie.overview || `Mira ${this.movie.title} en movieApp. Descubre detalles, tráiler y recomendaciones.`;
+    const image = this.movie.backdrop_path
+      ? `https://image.tmdb.org/t/p/original${this.movie.backdrop_path}`
+      : `https://image.tmdb.org/t/p/w500${this.movie.poster_path}`;
     const url = window.location.href;
 
     // Update Browser Title
     this.titleService.setTitle(title);
 
-    // Update Meta Tags
+    // Standard Meta Tags
     this.meta.updateTag({ name: 'description', content: description });
+    this.meta.updateTag({ name: 'keywords', content: `película, ${this.movie.title}, movieApp, streaming, cine` });
 
-    // Open Graph Tags
+    // Open Graph Tags (Facebook, WhatsApp, LinkedIn)
+    this.meta.updateTag({ property: 'og:site_name', content: 'movieApp' });
     this.meta.updateTag({ property: 'og:title', content: title });
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:image', content: image });
@@ -143,7 +147,7 @@ export class Movie {
   obtenerRecomendaciones(id: string) {
     this.movieS.getRecommendations('movie', id).subscribe({
       next: (res) => {
-        this.recommendations = res.results
+        this.recommendations = this.movieS.filterResults(res.results);
       },
       error: (err) => console.log('Error recommendations', err)
     })

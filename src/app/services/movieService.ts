@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { MovieDetail, Response, VideoResponse } from '../interfaces/interface';
+import { MovieDetail, Response, Result, VideoResponse } from '../interfaces/interface';
 
 @Injectable({
   providedIn: 'root'
@@ -51,6 +51,10 @@ export class MovieService {
 
   getSeriesVideos(id: string) {
     return this.http.get<VideoResponse>(`${this.API_URL}tv/${id}/videos?api_key=${this.API_KEY}`)
+  }
+
+  filterResults(results: Result[]): Result[] {
+    return results.filter(item => item.poster_path !== null && item.poster_path !== undefined);
   }
 
 }

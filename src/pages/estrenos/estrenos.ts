@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { Result } from '../../app/interfaces/interface';
 import { MovieService } from '../../app/services/movieService';
 import { MovieCard } from '../../components/movie-card/movie-card';
 import { CommonModule } from '@angular/common';
+import { Meta, Title } from '@angular/platform-browser';
 import { GENRE_MAP, GenreGroup } from '../../app/constants/genres';
 import { forkJoin } from 'rxjs';
 
@@ -17,14 +18,30 @@ import { forkJoin } from 'rxjs';
   `,
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class Estrenos {
+export class Estrenos implements OnInit {
   estrenos: Result[] = []
   genreGroups: GenreGroup[] = []
   movieS = inject(MovieService)
+  meta = inject(Meta)
+  titleService = inject(Title)
   loading = false
 
+  ngOnInit() {
+    this.updateMetaTags();
+    this.cargarTodasLasPaginas();
+  }
+
+  updateMetaTags() {
+    const title = 'Próximos Estrenos - movieApp';
+    const description = 'Descubre las películas que llegarán pronto a la gran pantalla. Mantente al día con los mejores estrenos.';
+    this.titleService.setTitle(title);
+    this.meta.updateTag({ name: 'description', content: description });
+    this.meta.updateTag({ property: 'og:title', content: title });
+    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:type', content: 'website' });
+  }
+
   constructor() {
-    this.cargarTodasLasPaginas()
   }
 
   cargarTodasLasPaginas() {
@@ -37,7 +54,8 @@ export class Estrenos {
     forkJoin(requests).subscribe({
       next: (responses) => {
         responses.forEach(res => {
-          this.estrenos = [...this.estrenos, ...res.results]
+          const filteredResults = this.movieS.filterResults(res.results);
+          this.estrenos = [...this.estrenos, ...filteredResults]
         })
         this.organizarPorGeneros()
         this.loading = false

@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { MovieService } from '../../app/services/movieService';
 import { Result } from '../../app/interfaces/interface';
 import { MovieCard } from '../../components/movie-card/movie-card';
 import { CommonModule } from '@angular/common';
+import { Meta, Title } from '@angular/platform-browser';
 import { GENRE_MAP, GenreGroup } from '../../app/constants/genres';
 import { forkJoin } from 'rxjs';
 
@@ -17,14 +18,30 @@ import { forkJoin } from 'rxjs';
   `,
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class Series {
+export class Series implements OnInit {
   movieService = inject(MovieService);
   series: Result[] = [];
   genreGroups: GenreGroup[] = []
   loading = false
+  meta = inject(Meta)
+  titleService = inject(Title)
+
+  ngOnInit() {
+    this.updateMetaTags();
+    this.cargarTodasLasPaginas();
+  }
+
+  updateMetaTags() {
+    const title = 'Series de TV - movieApp';
+    const description = 'Explora las mejores series de televisión. Temporadas, episodios y recomendaciones personalizadas.';
+    this.titleService.setTitle(title);
+    this.meta.updateTag({ name: 'description', content: description });
+    this.meta.updateTag({ property: 'og:title', content: title });
+    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:type', content: 'website' });
+  }
 
   constructor() {
-    this.cargarTodasLasPaginas()
   }
 
   cargarTodasLasPaginas() {
@@ -37,7 +54,8 @@ export class Series {
     forkJoin(requests).subscribe({
       next: (responses) => {
         responses.forEach(res => {
-          this.series = [...this.series, ...res.results]
+          const filteredResults = this.movieService.filterResults(res.results);
+          this.series = [...this.series, ...filteredResults]
         })
         this.organizarPorGeneros()
         this.loading = false

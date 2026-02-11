@@ -106,17 +106,21 @@ export class SeriesDetail {
         if (!this.serie) return;
 
         const title = `${this.serie.name} - movieApp`;
-        const description = this.serie.overview;
-        const image = `https://image.tmdb.org/t/p/w500${this.serie.backdrop_path}`;
+        const description = this.serie.overview || `Disfruta de ${this.serie.name} en movieApp. Encuentra información de temporadas, episodios y mucho más.`;
+        const image = this.serie.backdrop_path
+            ? `https://image.tmdb.org/t/p/original${this.serie.backdrop_path}`
+            : `https://image.tmdb.org/t/p/w500${this.serie.poster_path}`;
         const url = window.location.href;
 
         // Update Browser Title
         this.titleService.setTitle(title);
 
-        // Update Meta Tags
+        // Standard Meta Tags
         this.meta.updateTag({ name: 'description', content: description });
+        this.meta.updateTag({ name: 'keywords', content: `serie, ${this.serie.name}, movieApp, streaming, episodios, temporadas` });
 
-        // Open Graph Tags
+        // Open Graph Tags (Facebook, WhatsApp, LinkedIn)
+        this.meta.updateTag({ property: 'og:site_name', content: 'movieApp' });
         this.meta.updateTag({ property: 'og:title', content: title });
         this.meta.updateTag({ property: 'og:description', content: description });
         this.meta.updateTag({ property: 'og:image', content: image });
@@ -174,7 +178,7 @@ export class SeriesDetail {
     obtenerRecomendaciones(id: string) {
         this.movieS.getRecommendations('tv', id).subscribe({
             next: (res) => {
-                this.recommendations = res.results;
+                this.recommendations = this.movieS.filterResults(res.results);
             },
             error: (err) => console.log('Error recommendations', err)
         });
