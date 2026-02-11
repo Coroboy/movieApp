@@ -50,7 +50,7 @@ interface ServerOption {
             [src]="safeUrl"
             class="w-full h-full border-0 absolute inset-0 z-10"
             allowfullscreen
-            sandbox="allow-forms allow-scripts allow-same-origin allow-presentation"
+            allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
             referrerpolicy="origin"
           ></iframe>
         } @else {
@@ -67,11 +67,11 @@ interface ServerOption {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
         <div>
-          <h4 class="text-yellow-500 font-bold text-sm mb-1">💡 Tips de Reproducción:</h4>
+          <h4 class="text-yellow-500 font-bold text-sm mb-1">⚠️ Instrucciones para Audio Latino:</h4>
           <ul class="text-gray-300 text-sm leading-relaxed list-disc list-inside space-y-1">
-             <li>Si el video no carga, prueba cambiando de <strong>Servidor</strong> arriba.</li>
-             <li>Para audio latino, busca el icono de configuración ⚙️ o menú dentro del video.</li>
-             <li>Recomendamos usar el navegador <strong>Brave</strong> o extensiones AdBlock para evitar publicidad.</li>
+             <li><strong>Opción 1 y 2</strong> suelen tener la mejor calidad en Español Latino.</li>
+             <li>Si el audio sale en Inglés, busca el icono de <strong>engranaje ⚙️</strong> o <strong>bandera</strong> dentro del video y selecciona "Latino" o "Spanish".</li>
+             <li>Si un servidor falla, prueba con las otras opciones de arriba.</li>
           </ul>
         </div>
       </div>
@@ -99,13 +99,13 @@ export class MoviePlayer implements OnChanges {
 
   private sanitizer = inject(DomSanitizer);
   safeUrl: SafeResourceUrl | null = null;
-  currentServer: string = 'vidsrc';
+  currentServer: string = 'vidsrcto';
 
   servers: ServerOption[] = [
-    { name: 'Opción 1 (VidSrc Pro)', id: 'vidsrc' },
-    { name: 'Opción 2 (VidSrc To)', id: 'vidsrcto' },
-    { name: 'Opción 3 (2Embed)', id: '2embed' },
-    { name: 'Opción 4 (SuperEmbed)', id: 'superembed' }
+    { name: 'Opción 1 (Latino/Sub)', id: 'vidsrcto' },
+    { name: 'Opción 2 (Latino/Dual)', id: '2embed' },
+    { name: 'Opción 3 (Respaldo)', id: 'vidsrc' },
+    { name: 'Opción 4 (Multi)', id: 'superembed' }
   ];
 
   ngOnChanges(changes: SimpleChanges): void {
