@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { MovieDetail, Response } from '../interfaces/interface';
+import { MovieDetail, Response, VideoResponse } from '../interfaces/interface';
 
 @Injectable({
   providedIn: 'root'
@@ -13,20 +13,20 @@ export class MovieService {
   API_KEY = environment.api_key
   constructor() { }
 
-  obtenerCartelera() {
-    return this.http.get<Response>(`${this.API_URL}movie/now_playing?language=es-ES&api_key=${this.API_KEY}`)
+  obtenerCartelera(page: number = 1) {
+    return this.http.get<Response>(`${this.API_URL}movie/now_playing?language=es-ES&api_key=${this.API_KEY}&page=${page}`)
   }
 
-  obtenerEstrenos() {
-    return this.http.get<Response>(`${this.API_URL}movie/upcoming?language=es-ES&api_key=${this.API_KEY}`)
+  obtenerEstrenos(page: number = 1) {
+    return this.http.get<Response>(`${this.API_URL}movie/upcoming?language=es-ES&api_key=${this.API_KEY}&page=${page}`)
   }
 
   obtenerMovie(id: string) {
     return this.http.get<MovieDetail>(`${this.API_URL}movie/${id}?language=es-ES&api_key=${this.API_KEY}`)
   }
 
-  obtenerSeriesTopRated() {
-    return this.http.get<Response>(`${this.API_URL}tv/top_rated?language=es-ES&api_key=${this.API_KEY}`)
+  obtenerSeriesTopRated(page: number = 1) {
+    return this.http.get<Response>(`${this.API_URL}tv/top_rated?language=es-ES&api_key=${this.API_KEY}&page=${page}`)
   }
 
   obtenerSerie(id: string) {
@@ -35,6 +35,22 @@ export class MovieService {
 
   obtenerTemporada(tvId: string, seasonNumber: number) {
     return this.http.get<any>(`${this.API_URL}tv/${tvId}/season/${seasonNumber}?language=es-ES&api_key=${this.API_KEY}`)
+  }
+
+  searchMovies(query: string, page: number = 1) {
+    return this.http.get<Response>(`${this.API_URL}search/multi?language=es-ES&api_key=${this.API_KEY}&query=${query}&page=${page}`)
+  }
+
+  getRecommendations(type: 'movie' | 'tv', id: string) {
+    return this.http.get<Response>(`${this.API_URL}${type}/${id}/recommendations?language=es-ES&api_key=${this.API_KEY}`)
+  }
+
+  getMovieVideos(id: string) {
+    return this.http.get<VideoResponse>(`${this.API_URL}movie/${id}/videos?api_key=${this.API_KEY}`)
+  }
+
+  getSeriesVideos(id: string) {
+    return this.http.get<VideoResponse>(`${this.API_URL}tv/${id}/videos?api_key=${this.API_KEY}`)
   }
 
 }

@@ -6,6 +6,8 @@ import { Estrenos } from '../pages/estrenos/estrenos';
 import { Movie } from '../pages/movie/movie';
 import { Series } from '../pages/series/series';
 import { SeriesDetail } from '../pages/series-detail/series-detail';
+import { Search } from '../pages/search/search';
+import { Favoritos } from '../pages/favoritos/favoritos';
 
 export const routes: Routes = [
     {
@@ -35,6 +37,14 @@ export const routes: Routes = [
     {
         path: 'series/:id',
         component: SeriesDetail
+    },
+    {
+        path: 'search/:query',
+        component: Search
+    },
+    {
+        path: 'favoritos',
+        component: Favoritos
     },
     {
         path: '**',

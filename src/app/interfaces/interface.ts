@@ -29,6 +29,7 @@ export interface Result {
     name?: string;
     original_name?: string;
     first_air_date?: Date;
+    media_type?: string;
 }
 
 export interface MovieDetail {
@@ -99,4 +100,16 @@ export interface SpokenLanguage {
     english_name: string;
     iso_639_1: string;
     name: string;
+}
+
+export interface Video {
+    key: string;
+    site: string;
+    type: string;
+    name: string;
+    official: boolean;
+}
+
+export interface VideoResponse {
+    results: Video[];
 }
