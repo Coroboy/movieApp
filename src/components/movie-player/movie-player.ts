@@ -65,7 +65,7 @@ interface ServerOption {
             [src]="safeUrl"
             class="w-full h-full border-0 absolute inset-0 z-10"
             allowfullscreen
-            allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerpolicy="origin"
           ></iframe>
         } @else {
