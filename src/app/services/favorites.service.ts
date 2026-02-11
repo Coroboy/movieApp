@@ -34,6 +34,7 @@ export class FavoritesService {
         } else {
             // Add
             favorites.push(item);
+            console.log('agregado exitosamente');
         }
 
         localStorage.setItem(this.storageKey, JSON.stringify(favorites));
