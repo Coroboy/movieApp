@@ -12,13 +12,33 @@ import { MoviePlayer } from '../../components/movie-player/movie-player';
 
 @Component({
   selector: 'app-movie',
-  imports: [MovieCard, CurrencyPipe, DatePipe, DecimalPipe, CommonModule, MoviePlayer],
+  imports: [MovieCard, CurrencyPipe, DatePipe, CommonModule, MoviePlayer],
   templateUrl: './movie.html',
   styles: `
     :host {
-  display: block;
-}
-`,
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      from { 
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+    .animate-fade-in-up {
+      animation: fadeInUp 1s ease-out forwards;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class Movie {

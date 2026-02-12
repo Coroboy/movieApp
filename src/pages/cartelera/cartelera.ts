@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MovieService } from '../../app/services/movieService';
 import { Result } from '../../app/interfaces/interface';
 import { MovieCard } from '../../components/movie-card/movie-card';
@@ -7,24 +7,30 @@ import { Meta, Title } from '@angular/platform-browser';
 import { GENRE_MAP, GenreGroup } from '../../app/constants/genres';
 import { forkJoin } from 'rxjs';
 import { HeroCarousel } from '../../components/hero-carousel/hero-carousel';
+import { CategoryMenu, Category } from '../../components/category-menu/category-menu';
 
 @Component({
   selector: 'app-cartelera',
-  imports: [MovieCard, CommonModule, HeroCarousel],
+  imports: [MovieCard, CommonModule, HeroCarousel, CategoryMenu],
   templateUrl: './cartelera.html',
   styles: `
     :host {
       display: block;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Cartelera implements OnInit {
   cartelera: Result[] = []
   genreGroups: GenreGroup[] = []
+  filteredMovies: Result[] = []
+  categories: Category[] = []
+  selectedCategoryId: number = 0
+
   movieS = inject(MovieService)
   meta = inject(Meta)
   titleService = inject(Title)
+  cdr = inject(ChangeDetectorRef)
   loading = false
 
   ngOnInit() {
@@ -60,7 +66,13 @@ export class Cartelera implements OnInit {
           this.cartelera = [...this.cartelera, ...filteredResults]
         })
         this.organizarPorGeneros()
+        this.categories = [
+          { id: 0, name: 'Destacados' },
+          ...this.genreGroups.map(g => ({ id: g.genreId, name: g.genreName }))
+        ];
+        this.filteredMovies = this.cartelera; // Show all movies for Destacados by default
         this.loading = false
+        this.cdr.markForCheck()
       },
       error: (err) => {
         console.log('Error', err)
@@ -94,5 +106,18 @@ export class Cartelera implements OnInit {
       }))
       .filter(group => group.items.length > 0)
       .sort((a, b) => a.genreName.localeCompare(b.genreName));
+  }
+
+  onCategorySelected(genreId: number) {
+    this.selectedCategoryId = genreId;
+    if (genreId === 0) {
+      // Show all movies mixed together for "Destacados"
+      this.filteredMovies = this.cartelera;
+    } else {
+      // Show only movies from the selected genre
+      const genreGroup = this.genreGroups.find(g => g.genreId === genreId);
+      this.filteredMovies = genreGroup ? genreGroup.items : [];
+    }
+    this.cdr.markForCheck();
   }
 }

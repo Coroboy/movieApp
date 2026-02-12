@@ -1,114 +1,155 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Result } from '../../app/interfaces/interface';
 import { CommonModule } from '@angular/common';
+import { GENRE_MAP } from '../../app/constants/genres';
+import { MovieService } from '../../app/services/movieService';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-hero-carousel',
   imports: [CommonModule],
   template: `
-    <div class="relative w-full h-[500px] md:h-[600px] overflow-hidden bg-black"
+    <div class="relative w-full h-[60vh] md:h-[75vh] overflow-hidden bg-black cursor-pointer group/carousel"
          (mouseenter)="pauseAutoPlay()" 
-         (mouseleave)="resumeAutoPlay()">
+         (mouseleave)="resumeAutoPlay()"
+         (click)="navigateToDetail(items[currentIndex])">
       
       @for (item of items; track item.id; let i = $index) {
         <div 
-          (click)="navigateToDetail(item)"
-          class="absolute inset-0 transition-opacity duration-700 cursor-pointer"
+          class="absolute inset-0 transition-opacity duration-1000"
           [class.opacity-100]="currentIndex === i"
           [class.opacity-0]="currentIndex !== i"
-          [class.pointer-events-none]="currentIndex !== i">
+          [class.z-10]="currentIndex === i">
           
-          <!-- Background Image -->
-          <div class="absolute inset-0">
+          <!-- Background with Image & Video -->
+          <div class="absolute inset-0 overflow-hidden">
+            <!-- Static Backdrop (Ken Burns) -->
             <img 
               [src]="'https://image.tmdb.org/t/p/original' + item.backdrop_path" 
               [alt]="item.title || item.name"
-              class="w-full h-full object-cover">
+              class="w-full h-full object-cover transition-transform"
+              [class.animate-ken-burns]="currentIndex === i">
             
-            <!-- Gradient Overlay -->
-            <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+            <!-- Video Overlay (YouTube Muted) -->
+            @if (currentIndex === i && trailerUrls[item.id]) {
+              <div class="absolute inset-0 z-10 animate-fade-in transition-opacity duration-1000">
+                <iframe 
+                  [src]="trailerUrls[item.id]"
+                  class="w-full h-[150%] -top-[25%] absolute scale-[1.35] pointer-events-none"
+                  frameborder="0" 
+                  allow="autoplay; encrypted-media">
+                </iframe>
+              </div>
+            }
+
+            <!-- Refined HBO-style Gradients -->
+            <div class="absolute inset-0 z-20 bg-gradient-to-r from-black via-black/40 to-transparent"></div>
+            <div class="absolute inset-x-0 bottom-0 h-2/3 z-20 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+            <div class="absolute inset-x-0 top-0 h-32 z-20 bg-gradient-to-b from-black/60 to-transparent"></div>
+            
+            <!-- HBO Max Bottom Fade to Dark Background -->
+            <div class="absolute inset-x-0 bottom-0 h-96 z-30 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent pointer-events-none"></div>
           </div>
 
           <!-- Content -->
-          <div class="relative h-full max-w-7xl mx-auto px-6 md:px-12 flex items-center">
-            <div class="max-w-2xl space-y-4 md:space-y-6">
-              <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white drop-shadow-2xl leading-tight">
-                {{ item.title || item.name }}
-              </h1>
-              
-              <div class="flex items-center gap-4 text-sm md:text-base">
-                <div class="flex items-center gap-2">
-                  <svg class="w-5 h-5 md:w-6 md:h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                  </svg>
-                  <span class="text-white font-bold text-lg md:text-xl">{{ item.vote_average | number:'1.1-1' }}</span>
+          <div class="relative h-full max-w-[1800px] mx-auto px-12 md:px-24 flex items-center z-30">
+            <div class="max-w-3xl animate-fade-in-up">
+              <!-- Content Wrapper with Fixed Bottom Alignment for Buttons -->
+              <div class="flex flex-col h-full justify-center">
+                
+                <div class="space-y-4 md:space-y-6">
+                    <!-- Title -->
+                    <h1 class="text-2xl md:text-4xl lg:text-5xl font-black text-white leading-[0.9] tracking-tighter drop-shadow-2xl">
+                      {{ (item.title || item.name) | uppercase }}
+                    </h1>
+                    
+                    <!-- Metadata -->
+                    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm md:text-lg font-bold text-white/90">
+                      <span>{{ (item.release_date || item.first_air_date) | date:'yyyy' }}</span>
+                      
+                      <span class="flex items-center gap-2">
+                        <span class="px-1.5 py-0.5 border border-white/40 rounded text-[10px]">16+</span>
+                        <span>{{ item.media_type === 'movie' || item.title ? '2 h 15 min' : '2 Temporadas' }}</span>
+                      </span>
+
+                      <span class="text-white/60">•</span>
+                      
+                      <span class="text-white/80">
+                        {{ getGenreNames(item.genre_ids) }}
+                      </span>
+                    </div>
+
+                    <!-- Description with Fixed Height Container -->
+                    <div class="min-h-[60px] md:min-h-[100px] max-w-xl">
+                        <p class="text-white/80 text-sm md:text-base leading-relaxed line-clamp-2 md:line-clamp-3 font-medium">
+                          {{ item.overview }}
+                        </p>
+                    </div>
                 </div>
-                
-                <span class="text-gray-300 font-semibold">
-                  {{ (item.release_date || item.first_air_date) | date:'yyyy' }}
-                </span>
-                
-                <span class="px-3 py-1 bg-yellow-400/20 text-yellow-400 rounded-full font-bold text-xs uppercase border border-yellow-400/30">
-                  {{ item.media_type === 'movie' ? 'Película' : 'Serie' }}
-                </span>
-              </div>
 
-              <p class="text-gray-200 text-base md:text-lg leading-relaxed line-clamp-3 md:line-clamp-4 drop-shadow-lg">
-                {{ item.overview }}
-              </p>
-
-              <div class="flex gap-3 pt-2">
-                <button class="px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-lg transition-all shadow-lg hover:shadow-xl hover:scale-105 flex items-center gap-2">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
-                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
-                  </svg>
-                  Ver Detalles
-                </button>
+                <!-- Action Buttons - FIXED POSITION -->
+                <div class="flex items-center gap-4 mt-8">
+                  <button (click)="navigateToDetail(item); $event.stopPropagation()"
+                          class="px-8 py-3.5 bg-white text-black font-black rounded-lg transition-all hover:bg-gray-200 hover:scale-105 flex items-center gap-3 shadow-2xl">
+                    <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                    <span class="uppercase tracking-tight text-sm md:text-base">
+                      {{ (item.media_type === 'tv' || !item.title) ? 'Ver T1 E1' : 'Ver Ahora' }}
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       }
 
-      <!-- Navigation Arrows -->
+      <!-- Improved Navigation Arrows -->
       <button 
         (click)="prevSlide(); $event.stopPropagation()"
-        class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 bg-black/50 hover:bg-black/80 text-white rounded-full flex items-center justify-center transition-all hover:scale-110 z-10">
-        <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 p-2 text-white/20 hover:text-white transition-all z-40 cursor-pointer hidden md:block">
+        <svg class="w-10 h-10 lg:w-14 lg:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
         </svg>
       </button>
 
       <button 
         (click)="nextSlide(); $event.stopPropagation()"
-        class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 bg-black/50 hover:bg-black/80 text-white rounded-full flex items-center justify-center transition-all hover:scale-110 z-10">
-        <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 p-2 text-white/20 hover:text-white transition-all z-40 cursor-pointer hidden md:block">
+        <svg class="w-10 h-10 lg:w-14 lg:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
         </svg>
       </button>
 
+      <!-- Mute/Unmute Button -->
+      <button
+        (click)="toggleMute(); $event.stopPropagation()"
+        class="absolute bottom-8 right-8 z-50 p-3 rounded-full bg-black/40 hover:bg-black/60 border border-white/20 transition-all cursor-pointer"
+        [title]="isMuted ? 'Activar sonido' : 'Desactivar sonido'">
+        @if (isMuted) {
+          <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+          </svg>
+        } @else {
+          <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+        }
+      </button>
+
       <!-- Dot Indicators -->
-      <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+      <div class="absolute bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 flex gap-3 z-40">
         @for (item of items; track item.id; let i = $index) {
           <button
             (click)="goToSlide(i); $event.stopPropagation()"
-            class="h-3 rounded-full transition-all duration-500 ease-in-out transform"
-            [class.w-10]="currentIndex === i"
-            [class.w-3]="currentIndex !== i"
-            [class.bg-yellow-400]="currentIndex === i"
+            class="w-2 h-2 rounded-full transition-all duration-300"
+            [class.bg-white]="currentIndex === i"
+            [class.w-4]="currentIndex === i"
             [class.bg-white/40]="currentIndex !== i"
-            [class.shadow-lg]="currentIndex === i"
-            [class.shadow-yellow-400/50]="currentIndex === i"
-            [class.opacity-100]="currentIndex === i"
-            [class.opacity-60]="currentIndex !== i"
-            [class.hover:bg-white/80]="currentIndex !== i"
-            [class.hover:opacity-100]="currentIndex !== i"
-            [class.hover:scale-125]="currentIndex !== i"
-            [attr.aria-label]="'Ir a slide ' + (i + 1)"
-            [attr.aria-current]="currentIndex === i ? 'true' : 'false'">
+            [class.hover:bg-white/60]="currentIndex !== i"
+            [attr.aria-label]="'Ir a slide ' + (i + 1)">
           </button>
         }
       </div>
@@ -118,15 +159,46 @@ import { CommonModule } from '@angular/common';
     :host {
       display: block;
     }
+    .animate-fade-in {
+       animation: fadeIn 1.5s ease-in forwards;
+    }
+    .animate-fade-in-up {
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
   `,
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroCarousel implements OnInit, OnDestroy {
-  @Input({ required: true }) items!: Result[];
+  @Input({ required: true }) set items(value: Result[]) {
+    this._items = value;
+    this.fetchTrailers();
+  }
+  get items() { return this._items; }
+  private _items: Result[] = [];
 
   currentIndex = 0;
   autoPlayInterval: any;
+  trailerUrls: { [key: number]: SafeResourceUrl } = {};
+  isMuted = true;
+
   router = inject(Router);
+  cdr = inject(ChangeDetectorRef);
+  movieService = inject(MovieService);
+  sanitizer = inject(DomSanitizer);
 
   ngOnInit() {
     this.startAutoPlay();
@@ -137,9 +209,11 @@ export class HeroCarousel implements OnInit, OnDestroy {
   }
 
   startAutoPlay() {
+    this.stopAutoPlay();
     this.autoPlayInterval = setInterval(() => {
       this.nextSlide();
-    }, 5000);
+      this.cdr.markForCheck();
+    }, 8000);
   }
 
   stopAutoPlay() {
@@ -158,18 +232,58 @@ export class HeroCarousel implements OnInit, OnDestroy {
 
   nextSlide() {
     this.currentIndex = (this.currentIndex + 1) % this.items.length;
+    this.cdr.markForCheck();
   }
 
   prevSlide() {
     this.currentIndex = this.currentIndex === 0 ? this.items.length - 1 : this.currentIndex - 1;
+    this.cdr.markForCheck();
   }
 
   goToSlide(index: number) {
     this.currentIndex = index;
+    this.cdr.markForCheck();
+  }
+
+  fetchTrailers() {
+    this.items.forEach(item => {
+      const type = item.media_type === 'movie' || (item.title && !item.first_air_date) ? 'movie' : 'series';
+      const obs = type === 'movie'
+        ? this.movieService.getMovieVideos(item.id.toString())
+        : this.movieService.getSeriesVideos(item.id.toString());
+
+      obs.subscribe({
+        next: (res) => {
+          const trailer = res.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
+          if (trailer) {
+            const url = `https://www.youtube.com/embed/${trailer.key}?autoplay=1&mute=1&controls=0&loop=1&playlist=${trailer.key}&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1`;
+            this.trailerUrls[item.id] = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+            this.cdr.markForCheck();
+          }
+        }
+      });
+    });
   }
 
   navigateToDetail(item: Result) {
-    const type = item.media_type === 'movie' ? 'movie' : 'series';
+    if (!item) return;
+    const type = item.media_type === 'movie' || item.title ? 'movie' : 'series';
     this.router.navigate([`/${type}`, item.id]);
+  }
+
+  getGenreNames(genreIds: number[] | undefined): string {
+    if (!genreIds || genreIds.length === 0) return '';
+    return genreIds
+      .slice(0, 2)
+      .map(id => GENRE_MAP[id])
+      .filter(name => !!name)
+      .join(', ');
+  }
+
+  toggleMute() {
+    this.isMuted = !this.isMuted;
+    // Note: YouTube iframe API doesn't support programmatic mute/unmute via URL params
+    // This would require implementing YouTube IFrame API for full control
+    this.cdr.markForCheck();
   }
 }

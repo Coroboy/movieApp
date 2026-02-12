@@ -12,11 +12,43 @@ import { MoviePlayer } from '../../components/movie-player/movie-player';
 
 @Component({
     selector: 'app-series-detail',
-    imports: [MovieCard, DatePipe, DecimalPipe, CommonModule, FormsModule, MoviePlayer],
+    imports: [MovieCard, DatePipe, CommonModule, FormsModule, MoviePlayer],
     templateUrl: './series-detail.html',
     styles: `
     :host {
       display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      from { 
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes scaleX {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+    .animate-fade-in-up {
+      animation: fadeInUp 1s ease-out forwards;
+    }
+    .animate-scale-x {
+      animation: scaleX 0.4s ease-out forwards;
+      transform-origin: left;
+    }
+    select option {
+      background: #111 !important;
+      color: white !important;
     }
   `,
     changeDetection: ChangeDetectionStrategy.Default,
@@ -36,7 +68,8 @@ export class SeriesDetail {
     showTrailer = false
     showAllRecommendations = false
 
-    // Season and Episode selection
+    // UI State
+    activeTab: 'episodes' | 'extras' = 'episodes';
     selectedSeason: Season | null = null;
     selectedSeasonNumber: number = 1;
     selectedEpisodeNumber: number = 1;
@@ -47,6 +80,10 @@ export class SeriesDetail {
             this.serieId = params['id'];
             this.obtenerSerie();
         })
+    }
+
+    get currentEpisode() {
+        return this.episodes.find(e => e.episode_number === this.selectedEpisodeNumber);
     }
 
     get isFavorite(): boolean {
@@ -111,7 +148,9 @@ export class SeriesDetail {
                 this.serie = serie;
                 this.updateMetaTags();
                 if (this.serie.seasons && this.serie.seasons.length > 0) {
-                    this.selectedSeason = this.serie.seasons[0];
+                    // Try to find Season 1 first, otherwise take the first one available
+                    const season1 = this.serie.seasons.find(s => s.season_number === 1);
+                    this.selectedSeason = season1 || this.serie.seasons[0];
                     this.selectedSeasonNumber = this.selectedSeason.season_number;
                     this.loadSeasonData();
                 }
@@ -188,6 +227,10 @@ export class SeriesDetail {
         this.showTrailer = false;
     }
 
+    setActiveTab(tab: 'episodes' | 'extras') {
+        this.activeTab = tab;
+    }
+
     loadSeasonData() {
         if (this.selectedSeasonNumber) {
             console.log(`Loading season ${this.selectedSeasonNumber} for series ${this.serieId}`);
@@ -208,10 +251,8 @@ export class SeriesDetail {
     }
 
     onSeasonChange() {
-        if (this.selectedSeasonNumber) {
-            this.selectedEpisodeNumber = 1;
-            this.loadSeasonData();
-        }
+        this.selectedEpisodeNumber = 1;
+        this.loadSeasonData();
     }
 
     obtenerRecomendaciones(id: string) {

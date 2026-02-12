@@ -8,9 +8,25 @@
 html,
 body {
   height: 100%;
+  background-color: #0a0a0a;
+  /* Deep dark background like HBO Max */
 }
 
 body {
   margin: 0;
   font-family: 'Open Sans', sans-serif;
+}
+
+@keyframes ken-burns {
+  0% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(1.1);
+  }
+}
+
+.animate-ken-burns {
+  animation: ken-burns 20s ease-in-out infinite alternate;
 }

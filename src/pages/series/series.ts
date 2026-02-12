@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MovieService } from '../../app/services/movieService';
 import { Result } from '../../app/interfaces/interface';
 import { MovieCard } from '../../components/movie-card/movie-card';
@@ -7,25 +7,31 @@ import { Meta, Title } from '@angular/platform-browser';
 import { GENRE_MAP, GenreGroup } from '../../app/constants/genres';
 import { forkJoin } from 'rxjs';
 import { HeroCarousel } from '../../components/hero-carousel/hero-carousel';
+import { CategoryMenu, Category } from '../../components/category-menu/category-menu';
 
 @Component({
   selector: 'app-series',
-  imports: [MovieCard, CommonModule, HeroCarousel],
+  imports: [MovieCard, CommonModule, HeroCarousel, CategoryMenu],
   templateUrl: './series.html',
   styles: `
     :host {
       display: block;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Series implements OnInit {
   movieService = inject(MovieService);
   series: Result[] = [];
   genreGroups: GenreGroup[] = []
+  filteredMovies: Result[] = []
+  categories: Category[] = []
+  selectedCategoryId: number = 0
+
   loading = false
   meta = inject(Meta)
   titleService = inject(Title)
+  cdr = inject(ChangeDetectorRef)
 
   ngOnInit() {
     this.updateMetaTags();
@@ -59,7 +65,13 @@ export class Series implements OnInit {
           this.series = [...this.series, ...filteredResults]
         })
         this.organizarPorGeneros()
+        this.categories = [
+          { id: 0, name: 'Destacados' },
+          ...this.genreGroups.map(g => ({ id: g.genreId, name: g.genreName }))
+        ];
+        this.filteredMovies = this.series; // Show all series for Destacados by default
         this.loading = false
+        this.cdr.markForCheck()
       },
       error: (err) => {
         console.log(err)
@@ -92,5 +104,18 @@ export class Series implements OnInit {
       }))
       .filter(group => group.items.length > 0)
       .sort((a, b) => a.genreName.localeCompare(b.genreName));
+  }
+
+  onCategorySelected(genreId: number) {
+    this.selectedCategoryId = genreId;
+    if (genreId === 0) {
+      // Show all series mixed together for "Destacados"
+      this.filteredMovies = this.series;
+    } else {
+      // Show only series from the selected genre
+      const genreGroup = this.genreGroups.find(g => g.genreId === genreId);
+      this.filteredMovies = genreGroup ? genreGroup.items : [];
+    }
+    this.cdr.markForCheck();
   }
 }

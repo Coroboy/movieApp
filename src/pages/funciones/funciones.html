@@ -1,66 +1,80 @@
-<div class="grid grid-cols-2">
+<div class="grid grid-cols-2 pt-24">
 
-        <div class="bg-green-400 m-2 p-2 rounded-xl">
-            <h1 class="text-xl font-bold">Funciones sin parametros</h1>
-            <h1>{{message}}</h1>
-            <button (click)="saludar()" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Saludo!</button>
-            @for (estudiantes of usuarios; track $index) {
-                <h1>{{estudiantes}}</h1>
-            }
-            <button (click)="eliminar()" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Eliminar!</button>
-            <button (click)="mostrar()" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Mostrar!</button>
-            <button (click)="recuperar()" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Recuperar!</button>
-        </div>
+    <div class="bg-green-400 m-2 p-2 rounded-xl">
+        <h1 class="text-xl font-bold">Funciones sin parametros</h1>
+        <h1>{{message}}</h1>
+        <button (click)="saludar()"
+            class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Saludo!</button>
+        @for (estudiantes of usuarios; track $index) {
+        <h1>{{estudiantes}}</h1>
+        }
+        <button (click)="eliminar()"
+            class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Eliminar!</button>
+        <button (click)="mostrar()"
+            class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Mostrar!</button>
+        <button (click)="recuperar()"
+            class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Recuperar!</button>
+    </div>
 
-        <div class="bg-green-400 m-2 p-2 rounded-xl">
-            <h1>{{estadoAlumno}}</h1>
-            <button (click)="verificar(8)" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Verificar</button>
-        </div>
+    <div class="bg-green-400 m-2 p-2 rounded-xl">
+        <h1>{{estadoAlumno}}</h1>
+        <button (click)="verificar(8)"
+            class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Verificar</button>
+    </div>
 
-        <div class="bg-green-400 m-2 p-2 rounded-xl">
-            <h1 class="text-xl font-bold">Mayor         Menor</h1>
-            <h1>{{numeroMayor}}      {{numeroMenor}}</h1>
-            <button (click)="verificarNum(80,4)" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Verificar</button>
-        </div>
+    <div class="bg-green-400 m-2 p-2 rounded-xl">
+        <h1 class="text-xl font-bold">Mayor Menor</h1>
+        <h1>{{numeroMayor}} {{numeroMenor}}</h1>
+        <button (click)="verificarNum(80,4)"
+            class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Verificar</button>
+    </div>
 
-        <div class="bg-green-400 m-2 p-2 rounded-xl">
-            <h1 class="text-xl font-bold">Precio: {{precio}}</h1>
-            <h1>Descuento: {{descuento}}%</h1>
-            <h1>Precio final: {{precioConDescuento}}</h1>
-            <button (click)="precioFinal(50,10)" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Calcular precio</button>
-        </div>
-        
-        <div class="bg-green-400 m-2 p-2 rounded-xl">
-            <h1 class="text-xl font-bold">Parametros opcionales</h1>
-            <h1>{{saludo}}</h1>
-            <button (click)="enviarSaludo('Arroyo')" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Saludar</button>
-        </div>
-        
-        <div class="bg-green-400 m-2 p-2 rounded-xl">
-            <h1 class="text-xl font-bold">Suma</h1>
-            <h1>{{resultadoSuma}}</h1>
-            <button (click)="calculaSuma(1,2)" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Saludar</button>
-        </div>
-        
-        <div class="bg-cyan-500 m-2 p-2 rounded-xl">
-            <h1 class="text-xl font-bold">Descuento opcional</h1>
-            <h1 class="text-xl font-bold">Precio: {{price}}</h1>
-            <h1>Descuento: {{discount}}%</h1>
-            <h1>Precio final: {{finalPriceProduct}}</h1>
-            <button (click)="finalPrice(40)" class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Saludar</button>
-        </div>
+    <div class="bg-green-400 m-2 p-2 rounded-xl">
+        <h1 class="text-xl font-bold">Precio: {{precio}}</h1>
+        <h1>Descuento: {{descuento}}%</h1>
+        <h1>Precio final: {{precioConDescuento}}</h1>
+        <button (click)="precioFinal(50,10)"
+            class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Calcular precio</button>
+    </div>
 
-        <div class="bg-cyan-500 m-2 p-2 rounded-xl">
-            <button (click)="mostrarMensaje()" class="bg-blue-600 text-white p-2 cursor-pointer rounded mr-2">Mensaje por defecto</button>
-            <button (click)="mostrarMensaje('Hola desde Angular')" class="bg-green-600 text-white p-2  rounded">Mensaje personalizado</button>
-            <p class="mt-3 font-semibold">{{ mensaje }}</p>
-            <hr>
-            <button (click)="toggleMostrar()" class="bg-purple-600 text-white p-2 cursor-pointer rounded mr-2">Mostrar contenido</button>
-            <button (click)="toggleMostrar(false)" class="bg-red-600 text-white p-2 cursor-pointer rounded">Ocultar contenido</button>
-            @if (mostrar2) {
-                <div class="mt-3 p-3 bg-purple-200 rounded">
-                    Este contenido se controla con parámetros por defecto
-                </div>
-            }
+    <div class="bg-green-400 m-2 p-2 rounded-xl">
+        <h1 class="text-xl font-bold">Parametros opcionales</h1>
+        <h1>{{saludo}}</h1>
+        <button (click)="enviarSaludo('Arroyo')"
+            class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Saludar</button>
+    </div>
+
+    <div class="bg-green-400 m-2 p-2 rounded-xl">
+        <h1 class="text-xl font-bold">Suma</h1>
+        <h1>{{resultadoSuma}}</h1>
+        <button (click)="calculaSuma(1,2)"
+            class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Saludar</button>
+    </div>
+
+    <div class="bg-cyan-500 m-2 p-2 rounded-xl">
+        <h1 class="text-xl font-bold">Descuento opcional</h1>
+        <h1 class="text-xl font-bold">Precio: {{price}}</h1>
+        <h1>Descuento: {{discount}}%</h1>
+        <h1>Precio final: {{finalPriceProduct}}</h1>
+        <button (click)="finalPrice(40)"
+            class="mt-2 bg-gray-800 text-white rounded p-2 cursor-pointer hover:bg-gray-600">Saludar</button>
+    </div>
+
+    <div class="bg-cyan-500 m-2 p-2 rounded-xl">
+        <button (click)="mostrarMensaje()" class="bg-blue-600 text-white p-2 cursor-pointer rounded mr-2">Mensaje por
+            defecto</button>
+        <button (click)="mostrarMensaje('Hola desde Angular')" class="bg-green-600 text-white p-2  rounded">Mensaje
+            personalizado</button>
+        <p class="mt-3 font-semibold">{{ mensaje }}</p>
+        <hr>
+        <button (click)="toggleMostrar()" class="bg-purple-600 text-white p-2 cursor-pointer rounded mr-2">Mostrar
+            contenido</button>
+        <button (click)="toggleMostrar(false)" class="bg-red-600 text-white p-2 cursor-pointer rounded">Ocultar
+            contenido</button>
+        @if (mostrar2) {
+        <div class="mt-3 p-3 bg-purple-200 rounded">
+            Este contenido se controla con parámetros por defecto
         </div>
+        }
+    </div>
 </div>

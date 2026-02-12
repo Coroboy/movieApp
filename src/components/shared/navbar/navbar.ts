@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-navbar',
   imports: [RouterLink, RouterLinkActive, FormsModule, CommonModule],
-  template: `<nav class="fixed w-full z-[100] top-0 bg-black/90 backdrop-blur-md border-b border-gray-800/50">
+  template: `<nav class="fixed w-full z-[100] top-0 bg-transparent transition-all duration-300">
     <div class="relative z-[60] max-w-screen-2xl mx-auto px-6 py-3.5">
       <div class="flex items-center justify-between">
         

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Result } from '../../app/interfaces/interface';
 import { MovieService } from '../../app/services/movieService';
 import { MovieCard } from '../../components/movie-card/movie-card';
@@ -7,24 +7,30 @@ import { Meta, Title } from '@angular/platform-browser';
 import { GENRE_MAP, GenreGroup } from '../../app/constants/genres';
 import { forkJoin } from 'rxjs';
 import { HeroCarousel } from '../../components/hero-carousel/hero-carousel';
+import { CategoryMenu, Category } from '../../components/category-menu/category-menu';
 
 @Component({
   selector: 'app-estrenos',
-  imports: [MovieCard, CommonModule, HeroCarousel],
+  imports: [MovieCard, CommonModule, HeroCarousel, CategoryMenu],
   templateUrl: './estrenos.html',
   styles: `
     :host {
       display: block;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Estrenos implements OnInit {
   estrenos: Result[] = []
   genreGroups: GenreGroup[] = []
+  filteredMovies: Result[] = []
+  categories: Category[] = []
+  selectedCategoryId: number = 0
+
   movieS = inject(MovieService)
   meta = inject(Meta)
   titleService = inject(Title)
+  cdr = inject(ChangeDetectorRef)
   loading = false
 
   ngOnInit() {
@@ -59,7 +65,13 @@ export class Estrenos implements OnInit {
           this.estrenos = [...this.estrenos, ...filteredResults]
         })
         this.organizarPorGeneros()
+        this.categories = [
+          { id: 0, name: 'Destacados' },
+          ...this.genreGroups.map(g => ({ id: g.genreId, name: g.genreName }))
+        ];
+        this.filteredMovies = this.estrenos; // Show all movies for Destacados by default
         this.loading = false
+        this.cdr.markForCheck()
       },
       error: (err) => {
         console.log('Error', err)
@@ -92,5 +104,18 @@ export class Estrenos implements OnInit {
       }))
       .filter(group => group.items.length > 0)
       .sort((a, b) => a.genreName.localeCompare(b.genreName));
+  }
+
+  onCategorySelected(genreId: number) {
+    this.selectedCategoryId = genreId;
+    if (genreId === 0) {
+      // Show all movies mixed together for "Destacados"
+      this.filteredMovies = this.estrenos;
+    } else {
+      // Show only movies from the selected genre
+      const genreGroup = this.genreGroups.find(g => g.genreId === genreId);
+      this.filteredMovies = genreGroup ? genreGroup.items : [];
+    }
+    this.cdr.markForCheck();
   }
 }

@@ -3,93 +3,80 @@ import { Component, Input, OnChanges, SimpleChanges, inject } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-interface ServerOption {
-  name: string;
-  id: string;
-}
-
 @Component({
   selector: 'app-movie-player',
   standalone: true,
   imports: [CommonModule],
   template: `
     <div class="w-full max-w-5xl mx-auto">
-      <!-- Server Selection Tabs -->
-      <div class="flex flex-wrap gap-2 mb-4 bg-gray-800/50 p-2 rounded-xl backdrop-blur-sm border border-gray-700/50">
-        <span class="text-gray-400 text-sm font-medium flex items-center px-2">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-          </svg>
-          Servidores:
-        </span>
-        @for (server of servers; track server.id) {
-          <button 
-            (click)="selectServer(server.id)"
-            class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300 flex items-center gap-2"
-            [class.bg-gradient-to-r]="currentServer === server.id"
-            [class.from-purple-600]="currentServer === server.id"
-            [class.to-blue-600]="currentServer === server.id"
-            [class.text-white]="currentServer === server.id"
-            [class.shadow-lg]="currentServer === server.id"
-            [class.bg-gray-700]="currentServer !== server.id"
-            [class.text-gray-300]="currentServer !== server.id"
-            [class.hover:bg-gray-600]="currentServer !== server.id"
-          >
-            {{ server.name }}
-            @if (currentServer === server.id) {
-              <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-            }
-          </button>
-        }
-      </div>
-
       <!-- Player Container -->
-      <div class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl border border-gray-800 group">
-        @if (currentServer === 'custom' && !safeUrl) {
-            <div class="w-full h-full flex flex-col items-center justify-center p-6 bg-gray-900">
-                <div class="w-full max-w-md space-y-4">
-                    <h3 class="text-xl font-bold text-white text-center">Pegar Enlace Personalizado</h3>
-                    <p class="text-sm text-gray-400 text-center">Si tienes un enlace directo (embed, mp4, etc.), pégalo aquí:</p>
-                    <div class="flex gap-2">
-                        <input #urlInput type="text" placeholder="https://ejemplo.com/video" 
-                            class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:ring-2 focus:ring-purple-500 outline-none">
-                        <button (click)="applyCustomUrl(urlInput.value)" 
-                            class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
-                            Ver
-                        </button>
-                    </div>
-                </div>
+      <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-gray-800/50 group">
+        
+        @if (!isPlaying) {
+          <!-- Splash Screen / Poster -->
+          <div class="absolute inset-0 z-20 cursor-pointer overflow-hidden" (click)="play()">
+            <!-- Backdrop Image -->
+            <img 
+              [src]="'https://image.tmdb.org/t/p/w1280' + posterPath" 
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60"
+              alt="Poster"
+            >
+            
+            <!-- Overlay Gradient -->
+            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
+
+            <!-- Play Button Central -->
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="relative">
+                <!-- Glowing effect behind button -->
+                <div class="absolute inset-0 bg-purple-600 rounded-full blur-2xl opacity-40 group-hover:opacity-70 transition-opacity duration-500 animate-pulse"></div>
+                
+                <button class="relative bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-full shadow-2xl transform transition-all duration-300 group-hover:scale-110 group-hover:bg-purple-600">
+                  <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+              </div>
             </div>
-        } @else if (safeUrl) {
-          <iframe 
-            [src]="safeUrl"
-            class="w-full h-full border-0 absolute inset-0 z-10"
-            allowfullscreen
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="origin"
-          ></iframe>
-        } @else {
-          <div class="w-full h-full flex flex-col items-center justify-center text-gray-400 space-y-4">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
-            <p class="animate-pulse">Cargando reproductor...</p>
+
+            <!-- Header Text in Splash -->
+            <div class="absolute bottom-10 left-10 right-10 flex flex-col items-center">
+               <span class="px-4 py-1.5 bg-purple-600 text-white text-xs font-black rounded-full uppercase tracking-widest mb-4 shadow-lg shadow-purple-600/50">Disponible Ahora</span>
+               <h3 class="text-3xl font-black text-white text-center drop-shadow-lg tracking-tight">Haz clic para reproducir</h3>
+            </div>
           </div>
+        } @else {
+          <!-- Active Iframe -->
+          @if (safeUrl) {
+            <iframe 
+              [src]="safeUrl"
+              class="w-full h-full border-0 absolute inset-0 z-10"
+              allowfullscreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="origin"
+            ></iframe>
+          } @else {
+            <div class="w-full h-full flex flex-col items-center justify-center text-gray-400 space-y-4 bg-gray-900">
+              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+              <p class="animate-pulse font-bold tracking-widest uppercase text-xs">Iniciando Servidor...</p>
+            </div>
+          }
         }
       </div>
 
-      <!-- User Notice -->
-      <div class="mt-4 bg-yellow-400/10 border border-yellow-400/20 rounded-lg p-4 flex items-start gap-3 animate-fade-in-up">
-        <svg class="w-6 h-6 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <div>
-          <h4 class="text-yellow-500 font-bold text-sm mb-1">⚠️ Instrucciones para Audio Latino:</h4>
-          <ul class="text-gray-300 text-sm leading-relaxed list-disc list-inside space-y-1">
-             <li><strong>Opción 1 y 2</strong> suelen tener la mejor calidad en Español Latino.</li>
-             <li>Si el audio sale en Inglés, busca el icono de <strong>engranaje ⚙️</strong> o <strong>bandera</strong> dentro del video y selecciona "Latino" o "Spanish".</li>
-             <li>Si un servidor falla, prueba con las otras opciones de arriba.</li>
-          </ul>
+      <!-- User Notice (Subtle) -->
+      @if (isPlaying) {
+        <div class="mt-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 flex items-center gap-4 animate-fade-in-up">
+          <div class="p-2 bg-yellow-400/20 rounded-lg">
+            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <p class="text-gray-400 text-sm">
+            <span class="text-white font-bold">Tip:</span> Para audio Latino, busca el icono <span class="text-white">⚙️</span> en el reproductor.
+          </p>
         </div>
-      </div>
+      }
     </div>
   `,
   styles: [`
@@ -108,53 +95,29 @@ interface ServerOption {
 })
 export class MoviePlayer implements OnChanges {
   @Input({ required: true }) tmdbId!: string | number;
+  @Input({ required: true }) posterPath!: string;
   @Input() type: 'movie' | 'tv' = 'movie';
   @Input() season?: number;
   @Input() episode?: number;
 
   private sanitizer = inject(DomSanitizer);
   safeUrl: SafeResourceUrl | null = null;
-  currentServer: string = 'vidsrcto';
+  isPlaying = false;
 
-  servers: ServerOption[] = [
-    { name: 'Opción 1 (Latino/Sub)', id: 'vidsrcto' },
-    { name: 'Opción 2 (Latino/Dual)', id: '2embed' },
-    { name: 'Opción 3 (Respaldo)', id: 'vidsrc' },
-    { name: 'Opción 4 (Multi)', id: 'superembed' },
-    { name: '🔗 Link Propio', id: 'custom' }
-  ];
-
-  customUrl: string = '';
+  currentServer: string = 'vimeus';
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tmdbId'] || changes['type'] || changes['season'] || changes['episode']) {
-      // If we are somewhat stuck on custom, don't auto-reset unless ID changes really
-      if (this.currentServer !== 'custom') {
+      // If content changes while playing, reposition logic
+      if (this.isPlaying) {
         this.updateUrl();
-      } else {
-        // If ID changed, we probably should reset to default server
-        if (changes['tmdbId']) {
-          this.currentServer = 'vidsrcto';
-          this.updateUrl();
-        }
       }
     }
   }
 
-  selectServer(serverId: string) {
-    this.currentServer = serverId;
-    if (serverId !== 'custom') {
-      this.updateUrl();
-    } else {
-      this.safeUrl = null; // Clear view for input
-    }
-  }
-
-  applyCustomUrl(url: string) {
-    if (!url) return;
-    this.customUrl = url;
-    // Basic validation or sanitization could go here
-    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.customUrl);
+  play() {
+    this.isPlaying = true;
+    this.updateUrl();
   }
 
   private updateUrl(): void {
@@ -163,40 +126,15 @@ export class MoviePlayer implements OnChanges {
     let url = '';
     const s = this.season || 1;
     const e = this.episode || 1;
+    const vimeusKey = 'tXeWzSb3_zmKvo2bxgBWGhSEF2whYDigAMj8qdcacZc';
 
-    switch (this.currentServer) {
-      case 'vidsrc': // vidsrc.net / .me
-        if (this.type === 'movie') {
-          url = `https://vidsrc.me/embed/movie?tmdb=${this.tmdbId}`;
-        } else {
-          url = `https://vidsrc.me/embed/tv?tmdb=${this.tmdbId}&season=${s}&episode=${e}`;
-        }
-        break;
-      case 'vidsrcto': // vidsrc.to
-        if (this.type === 'movie') {
-          url = `https://vidsrc.to/embed/movie/${this.tmdbId}`;
-        } else {
-          url = `https://vidsrc.to/embed/tv/${this.tmdbId}/${s}/${e}`;
-        }
-        break;
-      case '2embed': // 2embed.cc
-        if (this.type === 'movie') {
-          url = `https://www.2embed.cc/embed/${this.tmdbId}`;
-        } else {
-          url = `https://www.2embed.cc/embedtv/${this.tmdbId}&s=${s}&e=${e}`;
-        }
-        break;
-      case 'superembed': // superembed
-        if (this.type === 'movie') {
-          url = `https://multiembed.mov/?video_id=${this.tmdbId}&tmdb=1`;
-        } else {
-          url = `https://multiembed.mov/?video_id=${this.tmdbId}&tmdb=1&s=${s}&e=${e}`;
-        }
-        break;
+    // We use Vimeus as the primary elegant solution requested
+    if (this.type === 'movie') {
+      url = `https://vimeus.com/e/movie?tmdb=${this.tmdbId}&view_key=${vimeusKey}`;
+    } else {
+      url = `https://vimeus.com/e/serie?tmdb=${this.tmdbId}&se=${s}&ep=${e}&view_key=${vimeusKey}`;
     }
 
-    if (this.currentServer !== 'custom') {
-      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-    }
+    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 }

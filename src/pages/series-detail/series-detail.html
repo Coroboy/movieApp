@@ -1,376 +1,281 @@
 @if (serie) {
-<div class="relative w-full min-h-screen bg-gray-900 text-white overflow-hidden font-sans">
+<div class="relative w-full min-h-screen bg-[#000000] text-white overflow-x-hidden font-sans">
 
-    <div class="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-40 blur-[2px] transform scale-105"
-        [style.backgroundImage]="'url(https://image.tmdb.org/t/p/original' + serie.backdrop_path + ')'">
+    <!-- Cinematic Backdrop -->
+    <div class="fixed inset-0 w-full h-full z-0 overflow-hidden">
+        <img [src]="'https://image.tmdb.org/t/p/original' + (serie.backdrop_path || serie.poster_path)"
+            class="w-full h-full object-cover scale-105 blur-[1px] opacity-60" [alt]="serie.name">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#000000] via-[#000000]/60 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#000000] via-[#000000]/40 to-transparent"></div>
     </div>
 
-    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent"></div>
-    <div class="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/60 to-transparent"></div>
+    <!-- Main Content Container -->
+    <div class="relative z-10 w-full">
 
-    <div class="relative z-10 container mx-auto px-4 py-12 flex flex-col md:flex-row items-center md:items-start gap-8">
+        <!-- Hero Section -->
+        <div class="container mx-auto px-6 md:px-16 pt-32 pb-12">
+            <div class="max-w-4xl space-y-8 animate-fade-in-up">
 
-        <div
-            class="flex-shrink-0 w-64 md:w-80 rounded-xl shadow-2xl transform hover:scale-105 transition-transform duration-300">
-            @if (serie.poster_path) {
-            <img class="w-full h-full rounded-xl border-4 border-gray-800/50"
-                [src]="'https://image.tmdb.org/t/p/w500' + serie.poster_path" [alt]="serie.name || serie.title"
-                (error)="serie.poster_path = ''">
-            } @else {
-            <div
-                class="w-full h-full rounded-xl border-4 border-gray-800/50 bg-gray-800 flex items-center justify-center">
-                <svg class="w-20 h-20 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                    </path>
-                </svg>
-            </div>
-            }
+                <!-- HBO Brand Space -->
+                <div class="flex items-center gap-2">
+                    <span class="text-white/60 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">HBO
+                        ORIGINAL</span>
+                </div>
 
-            @if (trailerKey) {
-            <button (click)="openTrailer()"
-                class="w-full mt-4 bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-colors cursor-pointer">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                </svg>
-                Ver Trailer
-            </button>
-            }
-
-
-
-
-            <!-- Series Player Component -->
-            <div class="mt-6">
-                <app-movie-player [tmdbId]="serie.id" type="tv" [season]="selectedSeasonNumber"
-                    [episode]="selectedEpisodeNumber">
-                </app-movie-player>
-            </div>
-        </div>
-
-        <div class="flex-1 space-y-6">
-
-            <div>
-                <!-- Title Section -->
-                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight mb-4">
+                <!-- Series Title / Logo -->
+                <h1
+                    class="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-none tracking-tighter drop-shadow-2xl uppercase">
                     {{ serie.name }}
-                    <span class="text-3xl md:text-4xl font-light text-gray-400 ml-2">({{ serie.first_air_date |
-                        date:'yyyy' }})</span>
                 </h1>
 
-                <!-- Action Buttons Row -->
-                <div class="flex flex-wrap items-center gap-3">
-                    <!-- Favorite Button -->
-                    <button (click)="toggleFavorite()"
-                        class="p-3 rounded-full bg-white/10 hover:bg-yellow-400/20 hover:scale-110 transition-all duration-300 flex-shrink-0 group cursor-pointer"
-                        [title]="isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            class="w-8 h-8 transition-all duration-300 group-hover:scale-110"
-                            [ngClass]="{'text-red-500 fill-current': isFavorite, 'text-gray-300 group-hover:text-red-400': !isFavorite}"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
-                    </button>
+                <!-- HBO Style Metadata -->
+                <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm md:text-base font-bold text-white/90">
+                    <span class="px-1.5 py-0.5 border border-white/40 rounded text-[10px]">18+</span>
+                    <span>{{ serie.number_of_seasons }} {{ serie.number_of_seasons === 1 ? 'temporada' : 'temporadas'
+                        }}</span>
+                </div>
 
-                    <!-- Like Button -->
-                    <button (click)="toggleLike()"
-                        class="p-3 rounded-full bg-white/10 hover:bg-green-400/20 hover:scale-110 transition-all duration-300 flex-shrink-0 group cursor-pointer"
-                        [title]="likeStatus === 'liked' ? 'Quitar me gusta' : 'Me gusta'">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            class="w-8 h-8 transition-all duration-300 group-hover:scale-110"
-                            [ngClass]="{'text-green-500 fill-current': likeStatus === 'liked', 'text-gray-300 group-hover:text-green-400': likeStatus !== 'liked'}"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                <!-- Primary Action -->
+                <div class="flex items-center gap-4">
+                    <button (click)="loadSeasonData()"
+                        class="px-12 py-3 bg-white text-black font-black rounded-lg transition-all hover:bg-gray-200 hover:scale-105 flex items-center gap-3 shadow-2xl">
+                        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
                         </svg>
+                        <span class="uppercase tracking-tight">Ver T{{ selectedSeasonNumber }} E{{ selectedEpisodeNumber
+                            }}</span>
                     </button>
+                </div>
 
-                    <!-- Dislike Button -->
-                    <button (click)="toggleDislike()"
-                        class="p-3 rounded-full bg-white/10 hover:bg-red-400/20 hover:scale-110 transition-all duration-300 flex-shrink-0 group cursor-pointer"
-                        [title]="likeStatus === 'disliked' ? 'Quitar no me gusta' : 'No me gusta'">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            class="w-8 h-8 transition-all duration-300 group-hover:scale-110"
-                            [ngClass]="{'text-red-500 fill-current': likeStatus === 'disliked', 'text-gray-300 group-hover:text-red-400': likeStatus !== 'disliked'}"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
-                        </svg>
-                    </button>
-
-                    <!-- Share Button -->
-                    <div class="relative">
-                        <button (click)="toggleShareMenu()"
-                            class="p-3 rounded-full bg-white/10 hover:bg-blue-400/20 hover:scale-110 transition-all duration-300 flex-shrink-0 group cursor-pointer"
-                            title="Compartir">
-                            <svg class="w-8 h-8 text-gray-300 group-hover:text-blue-400 transition-all duration-300 group-hover:scale-110"
+                <!-- Secondary Actions (HBO Style) -->
+                <div class="flex items-center gap-8 md:gap-12 pt-4">
+                    <!-- My List -->
+                    <button (click)="toggleFavorite()" class="flex flex-col items-center gap-2 group cursor-pointer">
+                        <div class="p-3 rounded-full border border-white/20 group-hover:bg-white/10 transition-all">
+                            <svg class="w-5 h-5 transition-all"
+                                [ngClass]="{'text-blue-500 fill-current': isFavorite, 'text-white': !isFavorite}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                    d="M12 4v16m8-8H4"></path>
                             </svg>
-                        </button>
-
-                        @if (showShareMenu) {
-                        <div
-                            class="absolute top-full right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl overflow-hidden z-50">
-                            <button (click)="shareWhatsApp()"
-                                class="w-full px-4 py-3 text-left text-white hover:bg-gray-700 transition-colors flex items-center gap-3">
-                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                                </svg>
-                                <span>WhatsApp</span>
-                            </button>
-                            <button (click)="shareFacebook()"
-                                class="w-full px-4 py-3 text-left text-white hover:bg-gray-700 transition-colors flex items-center gap-3">
-                                <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                                </svg>
-                                <span>Facebook</span>
-                            </button>
-                            <button (click)="shareTwitter()"
-                                class="w-full px-4 py-3 text-left text-white hover:bg-gray-700 transition-colors flex items-center gap-3">
-                                <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                                </svg>
-                                <span>X (Twitter)</span>
-                            </button>
-                            <button (click)="shareEmail()"
-                                class="w-full px-4 py-3 text-left text-white hover:bg-gray-700 transition-colors flex items-center gap-3">
-                                <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
-                                <span>Correo</span>
-                            </button>
-                            <button (click)="copyLink()"
-                                class="w-full px-4 py-3 text-left text-white hover:bg-gray-700 transition-colors flex items-center gap-3 border-t border-gray-700">
-                                <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                                </svg>
-                                <span>Copiar link</span>
-                            </button>
                         </div>
+                        <span
+                            class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Mi
+                            lista</span>
+                    </button>
+
+                    <!-- Rate -->
+                    <button (click)="toggleLike()" class="flex flex-col items-center gap-2 group cursor-pointer">
+                        <div class="p-3 rounded-full border border-white/20 group-hover:bg-white/10 transition-all">
+                            <svg class="w-5 h-5 transition-all"
+                                [ngClass]="{'text-green-500 fill-current': likeStatus === 'liked', 'text-white': likeStatus !== 'liked'}"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5">
+                                </path>
+                            </svg>
+                        </div>
+                        <span
+                            class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Clasificar</span>
+                    </button>
+
+                    <!-- Trailer -->
+                    @if (trailerKey) {
+                    <button (click)="openTrailer()" class="flex flex-col items-center gap-2 group cursor-pointer">
+                        <div class="p-3 rounded-full border border-white/20 group-hover:bg-white/10 transition-all">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <span
+                            class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Tráiler</span>
+                    </button>
+                    }
+                </div>
+
+                <!-- Synopsis -->
+                <div class="max-w-xl space-y-4">
+                    <p class="text-white/80 text-base md:text-lg leading-relaxed font-medium">
+                        {{ serie.overview }}
+                    </p>
+                    <div class="flex flex-wrap gap-2 text-white/60 text-sm font-bold">
+                        @for (genre of serie.genres; track genre.id) {
+                        <span>{{ genre.name }}{{ !$last ? ',' : '' }}</span>
                         }
                     </div>
                 </div>
 
-                <p class="text-lg text-gray-300 italic mt-4 font-medium">
-                    {{ serie.tagline || 'Descubre esta increíble serie' }}
-                </p>
+            </div>
+        </div>
+
+        <!-- Content Divider -->
+        <div class="w-full border-b border-white/10 mb-12">
+            <div class="container mx-auto px-6 md:px-16">
+                <div class="flex items-center gap-12">
+                    <button (click)="setActiveTab('episodes')"
+                        class="pb-4 text-sm md:text-base font-black uppercase tracking-widest transition-all relative"
+                        [class.text-white]="activeTab === 'episodes'" [class.text-white/40]="activeTab !== 'episodes'">
+                        Episodios
+                        @if (activeTab === 'episodes') {
+                        <div class="absolute bottom-0 left-0 w-full h-1 bg-white animate-scale-x"></div>
+                        }
+                    </button>
+                    <button (click)="setActiveTab('extras')"
+                        class="pb-4 text-sm md:text-base font-black uppercase tracking-widest transition-all relative"
+                        [class.text-white]="activeTab === 'extras'" [class.text-white/40]="activeTab !== 'extras'">
+                        Extras
+                        @if (activeTab === 'extras') {
+                        <div class="absolute bottom-0 left-0 w-full h-1 bg-white animate-scale-x"></div>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Episodes Section -->
+        @if (activeTab === 'episodes') {
+        <div class="container mx-auto px-6 md:px-16 pb-24">
+
+            <!-- Season Selector (Custom Style) -->
+            <div class="mb-12">
+                <div class="relative inline-block group">
+                    <select [(ngModel)]="selectedSeasonNumber" (change)="onSeasonChange()"
+                        class="appearance-none bg-white/5 border border-white/10 text-white font-black py-2.5 pl-5 pr-12 rounded hover:bg-white/10 transition-all focus:outline-none focus:ring-1 focus:ring-white">
+                        @for (season of serie.seasons; track season.id) {
+                        <option [value]="season.season_number" class="bg-black text-white px-4 py-2">
+                            {{ season.name }}
+                        </option>
+                        }
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white/60">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex items-center gap-6 text-sm">
-                <span class="px-3 py-1 bg-white/10 rounded-full">{{ serie.first_air_date | date:'dd/MM/yyyy'
-                    }}</span>
-                <span class="flex items-center gap-1">
-                    <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-                        </path>
-                    </svg>
-                    <span class="font-semibold">{{ serie.vote_average | number: '1.1-1' }}</span>
-                    <span class="text-gray-400">({{ serie.vote_count | number }} votos)</span>
-                </span>
-                <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full">{{ serie.status }}</span>
-                @if(serie.number_of_seasons) {
-                <span>{{ serie.number_of_seasons }} Temporadas</span>
-                }
-                @if(serie.number_of_episodes) {
-                <span>{{ serie.number_of_episodes }} Episodios</span>
-                }
-            </div>
-
-            <div class="flex flex-wrap gap-2">
-                @for (genre of serie.genres; track genre.id) {
-                <span
-                    class="px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 rounded-full text-sm font-medium">
-                    {{ genre.name }}
-                </span>
-                }
-            </div>
-
-            <div>
-                <h2 class="text-2xl font-bold mb-3">Sinopsis</h2>
-                <p class="text-gray-300 leading-relaxed text-lg">{{ serie.overview }}</p>
-            </div>
-
-            <div class="border-t border-gray-700 pt-6">
-                <h3 class="text-xl font-bold mb-4">Compañías de Producción</h3>
-                <div class="flex flex-wrap gap-4">
-                    @for (company of serie.production_companies; track company.id) {
-                    <div class="flex items-center gap-3 bg-white/5 rounded-lg p-3">
-                        @if (company.logo_path) {
-                        <img class="h-12 object-contain" [src]="'https://image.tmdb.org/t/p/w200' + company.logo_path"
-                            [alt]="company.name">
+            <!-- Episode Grid/Rows -->
+            <div class="space-y-12">
+                @for (episode of episodes; track episode.id) {
+                <div class="group flex flex-col md:flex-row gap-8 animate-fade-in transition-all">
+                    <!-- Thumbnail with Play Icon on Hover -->
+                    <div
+                        class="relative flex-shrink-0 w-full md:w-[350px] aspect-video rounded-lg overflow-hidden border border-white/5 cursor-pointer">
+                        @if (episode.still_path) {
+                        <img [src]="'https://image.tmdb.org/t/p/w500' + episode.still_path"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            [alt]="episode.name">
                         } @else {
-                        <span class="text-sm font-medium text-gray-300">{{ company.name }}</span>
-                        }
-                    </div>
-                    }
-                </div>
-            </div>
-
-            @if(serie.seasons && serie.seasons.length > 0) {
-            <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-2xl font-semibold text-white">Episodios</h3>
-
-                    @if(serie.number_of_seasons) {
-                    <div class="relative">
-                        <select (change)="onSeasonChange()"
-                            class="appearance-none bg-gray-800 border border-gray-700 text-white py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 cursor-pointer">
-                            @for (season of [].constructor(serie.number_of_seasons); track $index) {
-                            <option [value]="$index + 1" [selected]="($index + 1) === selectedSeasonNumber">
-                                Temporada {{ $index + 1 }}
-                            </option>
-                            }
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
-                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                        <div class="w-full h-full bg-white/5 flex items-center justify-center">
+                            <svg class="w-12 h-12 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
                             </svg>
                         </div>
-                    </div>
-                    }
-                </div>
-
-                @if (episodes && episodes.length > 0) {
-                <div class="space-y-6 max-h-[600px] overflow-y-auto px-2">
-                    @for (episode of episodes; track episode.id) {
-                    <div (click)="selectedEpisodeNumber = episode.episode_number"
-                        class="bg-gray-700/30 rounded-lg p-4 hover:bg-gray-700/50 transition-colors cursor-pointer group"
-                        [class.ring-2]="selectedEpisodeNumber === episode.episode_number"
-                        [class.ring-purple-500]="selectedEpisodeNumber === episode.episode_number"
-                        [class.bg-gray-700]="selectedEpisodeNumber === episode.episode_number">
-                        <div class="flex gap-4">
-                            <!-- Episode Image -->
-                            <div class="relative w-full sm:w-48 aspect-video flex-shrink-0 rounded-lg overflow-hidden">
-                                @if (episode.still_path) {
-                                <img [src]="'https://image.tmdb.org/t/p/w500' + episode.still_path" [alt]="episode.name"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    (error)="episode.still_path = ''">
-                                } @else {
-                                <div class="w-full h-full bg-gray-800 flex items-center justify-center">
-                                    <svg class="w-10 h-10 text-gray-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                }
-                                <!-- Play Overlay -->
-                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300"
-                                    [class.opacity-100]="selectedEpisodeNumber === episode.episode_number">
-                                    <svg class="w-10 h-10 text-white drop-shadow-lg transform group-hover:scale-110 transition-transform"
-                                        fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8 5v14l11-7z" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-start justify-between mb-2">
-                                    <h4 class="text-lg font-semibold text-white">
-                                        {{ episode.episode_number }}. {{ episode.name }}
-                                    </h4>
-                                    <span class="flex items-center gap-1 text-yellow-400 flex-shrink-0 ml-4">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path
-                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        {{ episode.vote_average | number: '1.1-1' }}
-                                    </span>
-                                </div>
-                                <p class="text-gray-300 text-sm mb-3 line-clamp-3">
-                                    {{ episode.overview || 'Sin descripción disponible' }}
-                                </p>
-                                <div class="flex gap-4 text-sm text-gray-400">
-                                    <span>{{ episode.air_date | date: 'dd/MM/yyyy' }}</span>
-                                    @if (episode.runtime) {
-                                    <span>{{ episode.runtime }} min</span>
-                                    }
-                                </div>
+                        }
+                        <div
+                            class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <div class="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
                             </div>
                         </div>
+                        @if (selectedEpisodeNumber === episode.episode_number) {
+                        <div
+                            class="absolute top-2 left-2 bg-blue-600 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest">
+                            Viendo ahora</div>
+                        }
                     </div>
-                    }
+
+                    <!-- Episode Info -->
+                    <div class="flex-1 space-y-3">
+                        <div class="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-white/60">
+                            <span>E{{ episode.episode_number }}: {{ episode.name }}</span>
+                            <span>{{ episode.runtime }} min</span>
+                            <span>{{ episode.air_date | date: 'yyyy' }}</span>
+                        </div>
+                        <h4 class="text-xl font-bold group-hover:text-blue-400 transition-colors">
+                            {{ episode.name }}
+                        </h4>
+                        <p class="text-white/60 text-sm md:text-base leading-relaxed line-clamp-3">
+                            {{ episode.overview || 'Sin descripción disponible por el momento.' }}
+                        </p>
+                    </div>
                 </div>
-                } @else {
-                <p class="text-gray-400 text-center py-8">No hay episodios disponibles para esta temporada</p>
                 }
             </div>
-            }
         </div>
-    </div>
-
-    <!-- Recommendations Section -->
-    <div class="relative z-10 container mx-auto px-4 pb-12">
-        <h2 class="text-3xl font-bold mb-6">Recomendaciones</h2>
-        @if (recommendations.length > 0) {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            @for (rec of recommendations.slice(0, showAllRecommendations ? recommendations.length : 4); track rec.id) {
-            <app-movie-card [movie]="rec" [type]="'tv'" [isCompact]="true"></app-movie-card>
-            }
-        </div>
-
-        @if (recommendations.length > 4) {
-        <div class="flex justify-center mt-8">
-            <button (click)="toggleRecommendations()"
-                class="bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-8 rounded-full border border-white/20 transition-all cursor-pointer">
-                {{ showAllRecommendations ? 'Ver menos' : 'Cargar más' }}
-            </button>
-        </div>
-        }
         } @else {
-        <div class="bg-white/5 rounded-lg p-8 text-center">
-            <p class="text-gray-400 text-lg">No hay recomendaciones disponibles para esta serie.</p>
+        <div class="container mx-auto px-6 md:px-16 pb-24 h-64 flex items-center justify-center text-white/40 italic">
+            Próximamente más contenido disponible.
         </div>
         }
+
+        <!-- Player Section -->
+        <div class="w-full bg-[#111] py-24 border-t border-white/5">
+            <div class="container mx-auto px-6 md:px-16">
+                <h3 class="text-2xl font-black uppercase tracking-widest mb-12">Reproduciendo ahora</h3>
+                <div
+                    class="bg-black aspect-video rounded-2xl overflow-hidden shadow-[0_0_100px_rgba(37,99,235,0.1)] border border-white/5">
+                    <app-movie-player [tmdbId]="serie.id" type="tv" [posterPath]="serie.backdrop_path"
+                        [season]="selectedSeasonNumber" [episode]="selectedEpisodeNumber">
+                    </app-movie-player>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations (HBO Style) -->
+        <div class="container mx-auto px-6 md:px-16 py-24">
+            <h3 class="text-2xl font-black uppercase tracking-widest mb-12">Quizá también te guste</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-8">
+                @for (rec of recommendations.slice(0, 10); track rec.id) {
+                <app-movie-card [movie]="rec" [type]="'tv'" [isCompact]="true"
+                    class="hover:scale-105 transition-transform duration-300"></app-movie-card>
+                }
+            </div>
+        </div>
+
     </div>
 
-</div>
-
-<!-- Trailer Modal -->
-@if (showTrailer && trailerUrl) {
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4" (click)="closeTrailer()">
-    <div class="relative w-full max-w-5xl" (click)="$event.stopPropagation()">
-        <button (click)="closeTrailer()"
-            class="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
-        <div class="relative w-full" style="padding-bottom: 56.25%;">
-            <iframe [src]="trailerUrl" class="absolute inset-0 w-full h-full rounded-lg" frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
-            </iframe>
+    <!-- Trailer Modal (HBO Style) -->
+    @if (showTrailer && trailerUrl) {
+    <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 animate-fade-in"
+        (click)="closeTrailer()">
+        <div class="relative w-full max-w-6xl aspect-video shadow-[0_0_100px_rgba(255,255,255,0.1)]"
+            (click)="$event.stopPropagation()">
+            <button (click)="closeTrailer()"
+                class="absolute -top-16 right-0 text-white/60 hover:text-white transition-all flex items-center gap-2 group cursor-pointer uppercase tracking-widest text-[10px] font-black">
+                Cerrar
+                <svg class="w-8 h-8 p-2 rounded-full border border-white/20 group-hover:bg-white/10" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+            <div class="w-full h-full rounded-xl overflow-hidden bg-black border border-white/10">
+                <iframe [src]="trailerUrl" class="w-full h-full" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
         </div>
     </div>
-</div>
-}
+    }
 
+</div>
 } @else {
-<div class="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-    <div class="text-center">
-        <svg aria-hidden="true" class="w-16 h-16 mx-auto text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-            viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                fill="currentColor" />
-            <path
-                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                fill="currentFill" />
-        </svg>
-        <span class="sr-only">Cargando...</span>
-        <p class="mt-4 text-gray-400 animate-pulse">Cargando serie...</p>
+<div class="flex items-center justify-center min-h-screen bg-black">
+    <div class="flex flex-col items-center gap-4">
+        <div class="w-12 h-12 border-4 border-white/10 border-t-white rounded-full animate-spin"></div>
+        <p class="text-white/40 text-[10px] font-black uppercase tracking-[0.3em]">Cargando...</p>
     </div>
 </div>
 }
