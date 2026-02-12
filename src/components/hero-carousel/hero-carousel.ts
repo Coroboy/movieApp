@@ -140,7 +140,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
       </button>
 
       <!-- Dot Indicators -->
-      <div class="absolute bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 flex gap-3 z-40">
+      <div class="absolute bottom-36 md:bottom-48 left-1/2 -translate-x-1/2 flex gap-3 z-40">
         @for (item of items; track item.id; let i = $index) {
           <button
             (click)="goToSlide(i); $event.stopPropagation()"
