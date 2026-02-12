@@ -99,6 +99,22 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                       {{ (item.media_type === 'tv' || !item.title) ? 'Ver T1 E1' : 'Ver Ahora' }}
                     </span>
                   </button>
+
+                  <!-- Mute/Unmute Button (Moved inside content) -->
+                  <button
+                    (click)="toggleMute(); $event.stopPropagation()"
+                    class="p-3.5 rounded-lg bg-black/40 hover:bg-black/60 border border-white/20 transition-all cursor-pointer flex items-center justify-center"
+                    [title]="isMuted ? 'Activar sonido' : 'Desactivar sonido'">
+                    @if (isMuted) {
+                      <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                      </svg>
+                    } @else {
+                      <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                      </svg>
+                    }
+                  </button>
                 </div>
               </div>
             </div>
@@ -123,24 +139,10 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
         </svg>
       </button>
 
-      <!-- Mute/Unmute Button -->
-      <button
-        (click)="toggleMute(); $event.stopPropagation()"
-        class="absolute bottom-8 right-8 z-50 p-3 rounded-full bg-black/40 hover:bg-black/60 border border-white/20 transition-all cursor-pointer"
-        [title]="isMuted ? 'Activar sonido' : 'Desactivar sonido'">
-        @if (isMuted) {
-          <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-          </svg>
-        } @else {
-          <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-          </svg>
-        }
-      </button>
+      <!-- Mute button removed from here -->
 
       <!-- Dot Indicators -->
-      <div class="absolute bottom-36 md:bottom-48 left-1/2 -translate-x-1/2 flex gap-3 z-40">
+      <div class="absolute bottom-28 md:bottom-32 left-1/2 -translate-x-1/2 flex gap-3 z-40">
         @for (item of items; track item.id; let i = $index) {
           <button
             (click)="goToSlide(i); $event.stopPropagation()"
@@ -256,7 +258,7 @@ export class HeroCarousel implements OnInit, OnDestroy {
         next: (res) => {
           const trailer = res.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
           if (trailer) {
-            const url = `https://www.youtube.com/embed/${trailer.key}?autoplay=1&mute=1&controls=0&loop=1&playlist=${trailer.key}&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1`;
+            const url = `https://www.youtube.com/embed/${trailer.key}?autoplay=1&mute=1&controls=0&loop=1&playlist=${trailer.key}&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1`;
             this.trailerUrls[item.id] = this.sanitizer.bypassSecurityTrustResourceUrl(url);
             this.cdr.markForCheck();
           }
@@ -282,8 +284,18 @@ export class HeroCarousel implements OnInit, OnDestroy {
 
   toggleMute() {
     this.isMuted = !this.isMuted;
-    // Note: YouTube iframe API doesn't support programmatic mute/unmute via URL params
-    // This would require implementing YouTube IFrame API for full control
+
+    // Programmatic YouTube Control via postMessage
+    const iframes = document.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+      const command = this.isMuted ? 'mute' : 'unMute';
+      iframe.contentWindow?.postMessage(JSON.stringify({
+        event: 'command',
+        func: command,
+        args: []
+      }), '*');
+    });
+
     this.cdr.markForCheck();
   }
 }
