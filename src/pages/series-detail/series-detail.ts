@@ -66,10 +66,10 @@ export class SeriesDetail {
     recommendations: Result[] = []
     trailerKey: string | null = null
     showTrailer = false
+    showPlayer = false
     showAllRecommendations = false
 
     // UI State
-    activeTab: 'episodes' | 'extras' = 'episodes';
     selectedSeason: Season | null = null;
     selectedSeasonNumber: number = 1;
     selectedEpisodeNumber: number = 1;
@@ -227,8 +227,17 @@ export class SeriesDetail {
         this.showTrailer = false;
     }
 
-    setActiveTab(tab: 'episodes' | 'extras') {
-        this.activeTab = tab;
+    openPlayer() {
+        this.showPlayer = true;
+    }
+
+    closePlayer() {
+        this.showPlayer = false;
+    }
+
+    selectEpisode(episode: any) {
+        this.selectedEpisodeNumber = episode.episode_number;
+        this.openPlayer();
     }
 
     loadSeasonData() {
@@ -258,7 +267,17 @@ export class SeriesDetail {
     obtenerRecomendaciones(id: string) {
         this.movieS.getRecommendations('tv', id).subscribe({
             next: (res) => {
-                this.recommendations = this.movieS.filterResults(res.results);
+                const filtered = this.movieS.filterResults(res.results);
+                if (filtered.length > 0) {
+                    this.recommendations = filtered;
+                } else if (this.serie && this.serie.genres.length > 0) {
+                    // Fallback to genre-based discovery if no direct recommendations
+                    this.movieS.getByGenre('tv', this.serie.genres[0].id).subscribe({
+                        next: (fallbackRes) => {
+                            this.recommendations = this.movieS.filterResults(fallbackRes.results.filter(s => s.id !== this.serie.id));
+                        }
+                    });
+                }
             },
             error: (err) => console.log('Error recommendations', err)
         });

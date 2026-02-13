@@ -14,31 +14,19 @@ import { CommonModule } from '@angular/common';
       <div class="flex items-center justify-between">
         
         <!-- Logo -->
-        <a routerLink="/home" class="flex items-center space-x-3 group cursor-pointer">
+        <a routerLink="/cartelera" class="flex items-center space-x-3 group cursor-pointer">
           <div class="relative">
             <svg class="w-10 h-10 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)] group-hover:drop-shadow-[0_0_12px_rgba(250,204,21,0.7)] transition-all" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"></path>
             </svg>
           </div>
-          <span class="text-3xl font-black tracking-tighter bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 text-transparent bg-clip-text drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] group-hover:from-yellow-300 group-hover:via-red-400 group-hover:to-pink-400 transition-all duration-300">
+          <span class="text-3xl font-black tracking-tighter text-yellow-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-all duration-300">
             movieApp
           </span>
         </a>
 
         <!-- Navigation Links -->
         <ul class="hidden md:flex items-center space-x-1">
-          <li>
-            <a routerLink="/home" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5" 
-               class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide">
-              HOME
-            </a>
-          </li>
-          <li>
-            <a routerLink="/funciones" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
-               class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide">
-              FUNCIONES
-            </a>
-          </li>
           <li>
             <a routerLink="/cartelera" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
                class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide">
@@ -136,8 +124,6 @@ import { CommonModule } from '@angular/common';
       <!-- Mobile Menu -->
       <div [class.hidden]="!mobileMenuOpen" class="md:hidden mt-4 pb-2">
         <ul class="flex flex-col space-y-1">
-          <li><a routerLink="/home" (click)="mobileMenuOpen = false" class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">HOME</a></li>
-          <li><a routerLink="/funciones" (click)="mobileMenuOpen = false" class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">FUNCIONES</a></li>
           <li><a routerLink="/cartelera" (click)="mobileMenuOpen = false" class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">CARTELERA</a></li>
           <li><a routerLink="/estrenos" (click)="mobileMenuOpen = false" class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">ESTRENOS</a></li>
           <li><a routerLink="/series" (click)="mobileMenuOpen = false" class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">SERIES</a></li>

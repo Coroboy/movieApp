@@ -8,7 +8,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="w-full max-w-5xl mx-auto">
+    <div class="w-full max-w-5xl mx-auto flex items-center justify-center min-h-[50vh]">
       <!-- Player Container -->
       <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-gray-800/50 group">
         
@@ -64,19 +64,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
         }
       </div>
 
-      <!-- User Notice (Subtle) -->
-      @if (isPlaying) {
-        <div class="mt-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 flex items-center gap-4 animate-fade-in-up">
-          <div class="p-2 bg-yellow-400/20 rounded-lg">
-            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-          <p class="text-gray-400 text-sm">
-            <span class="text-white font-bold">Tip:</span> Para audio Latino, busca el icono <span class="text-white">⚙️</span> en el reproductor.
-          </p>
-        </div>
-      }
     </div>
   `,
   styles: [`

@@ -54,6 +54,7 @@ export class Movie {
   recommendations: Result[] = []
   trailerKey: string | null = null
   showTrailer = false
+  showPlayer = false
   showAllRecommendations = false
 
   constructor() {
@@ -194,10 +195,28 @@ export class Movie {
     this.showTrailer = false;
   }
 
+  openPlayer() {
+    this.showPlayer = true;
+  }
+
+  closePlayer() {
+    this.showPlayer = false;
+  }
+
   obtenerRecomendaciones(id: string) {
     this.movieS.getRecommendations('movie', id).subscribe({
       next: (res) => {
-        this.recommendations = this.movieS.filterResults(res.results);
+        const filtered = this.movieS.filterResults(res.results);
+        if (filtered.length > 0) {
+          this.recommendations = filtered;
+        } else if (this.movie && this.movie.genres.length > 0) {
+          // Fallback to genre-based discovery if no direct recommendations
+          this.movieS.getByGenre('movie', this.movie.genres[0].id).subscribe({
+            next: (fallbackRes) => {
+              this.recommendations = this.movieS.filterResults(fallbackRes.results.filter(m => m.id !== this.movie.id));
+            }
+          });
+        }
       },
       error: (err) => console.log('Error recommendations', err)
     })

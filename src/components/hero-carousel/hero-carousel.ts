@@ -60,7 +60,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                 
                 <div class="space-y-4 md:space-y-6">
                     <!-- Title -->
-                    <h1 class="text-2xl md:text-4xl lg:text-5xl font-black text-white leading-[0.9] tracking-tighter drop-shadow-2xl">
+                    <h1 class="text-xl md:text-3xl lg:text-4xl font-black text-white leading-tight drop-shadow-2xl">
                       {{ (item.title || item.name) | uppercase }}
                     </h1>
                     
@@ -68,9 +68,11 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                     <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm md:text-lg font-bold text-white/90">
                       <span>{{ (item.release_date || item.first_air_date) | date:'yyyy' }}</span>
                       
-                      <span class="flex items-center gap-2">
-                        <span class="px-1.5 py-0.5 border border-white/40 rounded text-[10px]">16+</span>
-                        <span>{{ item.media_type === 'movie' || item.title ? '2 h 15 min' : '2 Temporadas' }}</span>
+                      <span class="flex items-center gap-4">
+                        <span class="px-1.5 py-0.5 border border-white/40 rounded text-[10px]">
+                          {{ (item.adult) ? '18+' : '12+' }}
+                        </span>
+                        <span>{{ item.media_type === 'movie' || item.title ? '2 h 15 min' : '1 Temporada' }}</span>
                       </span>
 
                       <span class="text-white/60">•</span>
@@ -81,8 +83,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                     </div>
 
                     <!-- Description with Fixed Height Container -->
-                    <div class="min-h-[60px] md:min-h-[100px] max-w-xl">
-                        <p class="text-white/80 text-sm md:text-base leading-relaxed line-clamp-2 md:line-clamp-3 font-medium">
+                    <div class="min-h-[50px] md:min-h-[80px] max-w-xl">
+                        <p class="text-white/80 text-xs md:text-sm leading-relaxed line-clamp-2 font-medium">
                           {{ item.overview }}
                         </p>
                     </div>
@@ -91,12 +93,22 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                 <!-- Action Buttons - FIXED POSITION -->
                 <div class="flex items-center gap-4 mt-8">
                   <button (click)="navigateToDetail(item); $event.stopPropagation()"
-                          class="px-8 py-3.5 bg-white text-black font-black rounded-lg transition-all hover:bg-gray-200 hover:scale-105 flex items-center gap-3 shadow-2xl">
-                    <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                          class="px-6 py-3 bg-[#1a1a1a] text-white font-black rounded-lg transition-all hover:bg-[#333] hover:scale-105 flex items-center gap-2 shadow-2xl">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z" />
                     </svg>
-                    <span class="uppercase tracking-tight text-sm md:text-base">
-                      {{ (item.media_type === 'tv' || !item.title) ? 'Ver T1 E1' : 'Ver Ahora' }}
+                    <span class="uppercase tracking-tight text-xs md:text-sm">
+                      Ver Tráiler
+                    </span>
+                  </button>
+
+                  <button (click)="navigateToDetail(item); $event.stopPropagation()"
+                          class="px-6 py-3 bg-white text-black font-black rounded-lg transition-all hover:opacity-90 hover:scale-105 flex items-center gap-2 shadow-2xl">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM10 16.5v-9l6 4.5-6 4.5z" />
+                    </svg>
+                    <span class="uppercase tracking-tight text-xs md:text-sm">
+                      {{ (item.media_type === 'movie' || item.title) ? 'Ver Película' : 'Ver Serie' }}
                     </span>
                   </button>
 
@@ -142,7 +154,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
       <!-- Mute button removed from here -->
 
       <!-- Dot Indicators -->
-      <div class="absolute bottom-28 md:bottom-32 left-1/2 -translate-x-1/2 flex gap-3 z-40">
+      <div class="absolute bottom-24 md:bottom-28 left-1/2 -translate-x-1/2 flex gap-3 z-40">
         @for (item of items; track item.id; let i = $index) {
           <button
             (click)="goToSlide(i); $event.stopPropagation()"
@@ -234,16 +246,19 @@ export class HeroCarousel implements OnInit, OnDestroy {
 
   nextSlide() {
     this.currentIndex = (this.currentIndex + 1) % this.items.length;
+    this.applyAudioState(); // Apply cached audio state
     this.cdr.markForCheck();
   }
 
   prevSlide() {
     this.currentIndex = this.currentIndex === 0 ? this.items.length - 1 : this.currentIndex - 1;
+    this.applyAudioState(); // Apply cached audio state
     this.cdr.markForCheck();
   }
 
   goToSlide(index: number) {
     this.currentIndex = index;
+    this.applyAudioState(); // Apply cached audio state
     this.cdr.markForCheck();
   }
 
@@ -258,9 +273,13 @@ export class HeroCarousel implements OnInit, OnDestroy {
         next: (res) => {
           const trailer = res.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
           if (trailer) {
-            const url = `https://www.youtube.com/embed/${trailer.key}?autoplay=1&mute=1&controls=0&loop=1&playlist=${trailer.key}&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1`;
+            // Removed mute=1 from URL to allow programmed control
+            const url = `https://www.youtube.com/embed/${trailer.key}?autoplay=1&controls=0&loop=1&playlist=${trailer.key}&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1`;
             this.trailerUrls[item.id] = this.sanitizer.bypassSecurityTrustResourceUrl(url);
             this.cdr.markForCheck();
+
+            // Re-apply mute state after a short delay to ensure iframe is ready
+            setTimeout(() => this.applyAudioState(), 1000);
           }
         }
       });
@@ -284,10 +303,15 @@ export class HeroCarousel implements OnInit, OnDestroy {
 
   toggleMute() {
     this.isMuted = !this.isMuted;
+    this.applyAudioState();
+    this.cdr.markForCheck();
+  }
 
+  applyAudioState() {
     // Programmatic YouTube Control via postMessage
     const iframes = document.querySelectorAll('iframe');
     iframes.forEach(iframe => {
+      // Force mute if user wants mute, otherwise unmute
       const command = this.isMuted ? 'mute' : 'unMute';
       iframe.contentWindow?.postMessage(JSON.stringify({
         event: 'command',
@@ -295,7 +319,5 @@ export class HeroCarousel implements OnInit, OnDestroy {
         args: []
       }), '*');
     });
-
-    this.cdr.markForCheck();
   }
 }

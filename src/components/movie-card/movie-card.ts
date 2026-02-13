@@ -32,10 +32,10 @@ import { CommonModule } from '@angular/common';
       <!-- Elegant Hover Overlay -->
       <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-5">
         <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-          <h5 class="text-xl font-bold text-white mb-2 leading-tight drop-shadow-md">
+          <h5 class="text-base md:text-lg font-bold text-white mb-1.5 leading-tight drop-shadow-md">
             {{ movie.title || movie.name }}
           </h5>
-          <p class="text-sm text-gray-300 line-clamp-3 mb-2 font-light leading-relaxed">
+          <p class="text-xs text-gray-300 line-clamp-2 mb-2 font-light leading-relaxed">
             {{ movie.overview }}
           </p>
           <div class="flex items-center gap-2 mb-1">

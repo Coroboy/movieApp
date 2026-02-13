@@ -16,90 +16,97 @@
         <div class="container mx-auto px-6 md:px-16 pt-32 pb-12">
             <div class="max-w-4xl space-y-8 animate-fade-in-up">
 
-                <!-- HBO Brand Space -->
-                <div class="flex items-center gap-2">
-                    <span class="text-white/60 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">HBO
-                        ORIGINAL</span>
-                </div>
+                <!-- Label removed -->
 
                 <!-- Series Title / Logo -->
                 <h1
-                    class="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-none tracking-tighter drop-shadow-2xl uppercase">
+                    class="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight drop-shadow-2xl uppercase">
                     {{ serie.name }}
                 </h1>
 
                 <!-- HBO Style Metadata -->
-                <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm md:text-base font-bold text-white/90">
+                <div class="flex flex-wrap items-center gap-x-10 gap-y-3 text-sm md:text-base font-bold text-white/90">
                     <span class="px-1.5 py-0.5 border border-white/40 rounded text-[10px]">18+</span>
                     <span>{{ serie.number_of_seasons }} {{ serie.number_of_seasons === 1 ? 'temporada' : 'temporadas'
                         }}</span>
                 </div>
 
                 <!-- Primary Action -->
-                <div class="flex items-center gap-4">
-                    <button (click)="loadSeasonData()"
-                        class="px-12 py-3 bg-white text-black font-black rounded-lg transition-all hover:bg-gray-200 hover:scale-105 flex items-center gap-3 shadow-2xl">
-                        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                <div class="flex flex-wrap items-center gap-4">
+                    @if (trailerKey) {
+                    <button (click)="openTrailer()"
+                        class="px-8 py-3 bg-white text-black font-black rounded-lg transition-all hover:bg-gray-200 hover:scale-105 flex items-center gap-2 shadow-2xl cursor-pointer">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z" />
                         </svg>
-                        <span class="uppercase tracking-tight">Ver T{{ selectedSeasonNumber }} E{{ selectedEpisodeNumber
-                            }}</span>
+                        <span class="uppercase tracking-tight text-sm">Ver Tráiler</span>
+                    </button>
+                    }
+
+                    <button (click)="openPlayer()"
+                        class="px-8 py-3 bg-brand text-white font-black rounded-lg transition-all hover:opacity-90 hover:scale-105 flex items-center gap-2 shadow-2xl cursor-pointer">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM10 16.5v-9l6 4.5-6 4.5z" />
+                        </svg>
+                        <span class="uppercase tracking-tight text-sm">Ver Serie</span>
                     </button>
                 </div>
 
                 <!-- Secondary Actions (HBO Style) -->
                 <div class="flex items-center gap-8 md:gap-12 pt-4">
-                    <!-- My List -->
+                    <!-- My List / Favorites -->
                     <button (click)="toggleFavorite()" class="flex flex-col items-center gap-2 group cursor-pointer">
                         <div class="p-3 rounded-full border border-white/20 group-hover:bg-white/10 transition-all">
-                            <svg class="w-5 h-5 transition-all"
-                                [ngClass]="{'text-blue-500 fill-current': isFavorite, 'text-white': !isFavorite}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 transition-all text-white"
+                                [ngClass]="{'fill-current text-red-500': isFavorite}" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4"></path>
-                            </svg>
-                        </div>
-                        <span
-                            class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Mi
-                            lista</span>
-                    </button>
-
-                    <!-- Rate -->
-                    <button (click)="toggleLike()" class="flex flex-col items-center gap-2 group cursor-pointer">
-                        <div class="p-3 rounded-full border border-white/20 group-hover:bg-white/10 transition-all">
-                            <svg class="w-5 h-5 transition-all"
-                                [ngClass]="{'text-green-500 fill-current': likeStatus === 'liked', 'text-white': likeStatus !== 'liked'}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5">
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
                                 </path>
                             </svg>
                         </div>
                         <span
-                            class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Clasificar</span>
+                            class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Favoritos</span>
                     </button>
 
-                    <!-- Trailer -->
-                    @if (trailerKey) {
-                    <button (click)="openTrailer()" class="flex flex-col items-center gap-2 group cursor-pointer">
-                        <div class="p-3 rounded-full border border-white/20 group-hover:bg-white/10 transition-all">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z">
-                                </path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                    <!-- Share (Moved here) -->
+                    <div class="relative group/share">
+                        <button (click)="toggleShareMenu()"
+                            class="flex flex-col items-center gap-2 group cursor-pointer">
+                            <div class="p-3 rounded-full border border-white/20 group-hover:bg-white/10 transition-all">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span
+                                class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Compartir</span>
+                        </button>
+
+                        @if (showShareMenu) {
+                        <div
+                            class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-48 bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-[100] animate-fade-in">
+                            <button (click)="shareWhatsApp()"
+                                class="w-full px-4 py-3 text-left text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition-colors flex items-center gap-3">
+                                <span class="text-green-500">WhatsApp</span>
+                            </button>
+                            <button (click)="shareFacebook()"
+                                class="w-full px-4 py-3 text-left text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition-colors flex items-center gap-3">
+                                <span class="text-blue-500">Facebook</span>
+                            </button>
+                            <button (click)="copyLink()"
+                                class="w-full px-4 py-3 text-left text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition-colors flex items-center gap-3 border-t border-white/5">
+                                <span class="text-yellow-400">Copiar Link</span>
+                            </button>
                         </div>
-                        <span
-                            class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Tráiler</span>
-                    </button>
-                    }
+                        }
+                    </div>
                 </div>
 
-                <!-- Synopsis -->
-                <div class="max-w-xl space-y-4">
-                    <p class="text-white/80 text-base md:text-lg leading-relaxed font-medium">
+                <div class="max-w-2xl space-y-4">
+                    <p class="text-white/80 text-sm md:text-base leading-relaxed font-medium line-clamp-4">
                         {{ serie.overview }}
                     </p>
                     <div class="flex flex-wrap gap-2 text-white/60 text-sm font-bold">
@@ -116,28 +123,15 @@
         <div class="w-full border-b border-white/10 mb-12">
             <div class="container mx-auto px-6 md:px-16">
                 <div class="flex items-center gap-12">
-                    <button (click)="setActiveTab('episodes')"
-                        class="pb-4 text-sm md:text-base font-black uppercase tracking-widest transition-all relative"
-                        [class.text-white]="activeTab === 'episodes'" [class.text-white/40]="activeTab !== 'episodes'">
+                    <button class="pb-4 text-sm md:text-base font-black uppercase tracking-widest relative">
                         Episodios
-                        @if (activeTab === 'episodes') {
-                        <div class="absolute bottom-0 left-0 w-full h-1 bg-white animate-scale-x"></div>
-                        }
-                    </button>
-                    <button (click)="setActiveTab('extras')"
-                        class="pb-4 text-sm md:text-base font-black uppercase tracking-widest transition-all relative"
-                        [class.text-white]="activeTab === 'extras'" [class.text-white/40]="activeTab !== 'extras'">
-                        Extras
-                        @if (activeTab === 'extras') {
-                        <div class="absolute bottom-0 left-0 w-full h-1 bg-white animate-scale-x"></div>
-                        }
+                        <div class="absolute bottom-0 left-0 w-full h-1 bg-white"></div>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Episodes Section -->
-        @if (activeTab === 'episodes') {
         <div class="container mx-auto px-6 md:px-16 pb-24">
 
             <!-- Season Selector (Custom Style) -->
@@ -163,7 +157,8 @@
             <!-- Episode Grid/Rows -->
             <div class="space-y-12">
                 @for (episode of episodes; track episode.id) {
-                <div class="group flex flex-col md:flex-row gap-8 animate-fade-in transition-all">
+                <div (click)="selectEpisode(episode)"
+                    class="group flex flex-col md:flex-row gap-8 animate-fade-in transition-all cursor-pointer">
                     <!-- Thumbnail with Play Icon on Hover -->
                     <div
                         class="relative flex-shrink-0 w-full md:w-[350px] aspect-video rounded-lg overflow-hidden border border-white/5 cursor-pointer">
@@ -213,24 +208,8 @@
                 }
             </div>
         </div>
-        } @else {
-        <div class="container mx-auto px-6 md:px-16 pb-24 h-64 flex items-center justify-center text-white/40 italic">
-            Próximamente más contenido disponible.
-        </div>
-        }
 
-        <!-- Player Section -->
-        <div class="w-full bg-[#111] py-24 border-t border-white/5">
-            <div class="container mx-auto px-6 md:px-16">
-                <h3 class="text-2xl font-black uppercase tracking-widest mb-12">Reproduciendo ahora</h3>
-                <div
-                    class="bg-black aspect-video rounded-2xl overflow-hidden shadow-[0_0_100px_rgba(37,99,235,0.1)] border border-white/5">
-                    <app-movie-player [tmdbId]="serie.id" type="tv" [posterPath]="serie.backdrop_path"
-                        [season]="selectedSeasonNumber" [episode]="selectedEpisodeNumber">
-                    </app-movie-player>
-                </div>
-            </div>
-        </div>
+        <!-- Player Section Removed -->
 
         <!-- Recommendations (HBO Style) -->
         <div class="container mx-auto px-6 md:px-16 py-24">
@@ -244,6 +223,28 @@
         </div>
 
     </div>
+
+    <!-- Series Player Modal -->
+    @if (showPlayer) {
+    <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 animate-fade-in"
+        (click)="closePlayer()">
+        <div class="relative w-full h-full max-w-[100vw] max-h-[100vh]" (click)="$event.stopPropagation()">
+            <button (click)="closePlayer()"
+                class="absolute top-6 right-6 z-50 text-white/60 hover:text-white transition-all flex items-center gap-2 group cursor-pointer uppercase tracking-widest text-[10px] font-black bg-black/40 p-2 rounded-lg">
+                Cerrar
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+            <div class="w-full h-full bg-black">
+                <app-movie-player [tmdbId]="serie.id" type="tv" [posterPath]="serie.backdrop_path"
+                    [season]="selectedSeasonNumber" [episode]="selectedEpisodeNumber">
+                </app-movie-player>
+            </div>
+        </div>
+    </div>
+    }
 
     <!-- Trailer Modal (HBO Style) -->
     @if (showTrailer && trailerUrl) {

@@ -45,6 +45,10 @@ export class MovieService {
     return this.http.get<Response>(`${this.API_URL}${type}/${id}/recommendations?language=es-ES&api_key=${this.API_KEY}`)
   }
 
+  getByGenre(type: 'movie' | 'tv', genreId: number, page: number = 1) {
+    return this.http.get<Response>(`${this.API_URL}discover/${type}?language=es-ES&api_key=${this.API_KEY}&with_genres=${genreId}&page=${page}&sort_by=popularity.desc`)
+  }
+
   getMovieVideos(id: string) {
     return this.http.get<VideoResponse>(`${this.API_URL}movie/${id}/videos?api_key=${this.API_KEY}`)
   }
