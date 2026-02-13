@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
       
       <!-- Favorite Button -->
       <button (click)="toggleFavorite($event)" 
-              class="absolute top-3 right-3 z-30 p-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-red-500/80 transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0">
+              class="absolute top-3 right-3 z-30 p-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-colors duration-300" 
              [ngClass]="{'text-red-500 fill-current': isFavorite, 'text-white': !isFavorite}"
              viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
