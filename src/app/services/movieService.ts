@@ -22,7 +22,7 @@ export class MovieService {
   }
 
   obtenerMovie(id: string) {
-    return this.http.get<MovieDetail>(`${this.API_URL}movie/${id}?language=es-ES&api_key=${this.API_KEY}`)
+    return this.http.get<MovieDetail>(`${this.API_URL}movie/${id}?language=es-ES&api_key=${this.API_KEY}&append_to_response=release_dates,videos`)
   }
 
   obtenerSeriesTopRated(page: number = 1) {
@@ -30,7 +30,7 @@ export class MovieService {
   }
 
   obtenerSerie(id: string) {
-    return this.http.get<MovieDetail>(`${this.API_URL}tv/${id}?language=es-ES&api_key=${this.API_KEY}`)
+    return this.http.get<MovieDetail>(`${this.API_URL}tv/${id}?language=es-ES&api_key=${this.API_KEY}&append_to_response=content_ratings,videos`)
   }
 
   obtenerTemporada(tvId: string, seasonNumber: number) {

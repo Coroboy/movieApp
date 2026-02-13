@@ -66,6 +66,9 @@ export interface MovieDetail {
     number_of_episodes?: number;
     number_of_seasons?: number;
     seasons?: Season[];
+    videos?: VideoResponse;
+    release_dates?: { results: any[] };
+    content_ratings?: { results: any[] };
 }
 
 export interface Season {

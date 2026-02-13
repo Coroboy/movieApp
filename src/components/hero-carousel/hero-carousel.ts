@@ -70,9 +70,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                       
                       <span class="flex items-center gap-4">
                         <span class="px-1.5 py-0.5 border border-white/40 rounded text-[10px]">
-                          {{ (item.adult) ? '18+' : '12+' }}
+                          {{ getCertification(item.id) }}
                         </span>
-                        <span>{{ item.media_type === 'movie' || item.title ? '2 h 15 min' : '1 Temporada' }}</span>
+                        <span>{{ getRuntime(item.id) }}</span>
                       </span>
 
                       <span class="text-white/60">•</span>
@@ -194,6 +194,7 @@ export class HeroCarousel implements OnInit, OnDestroy {
   currentIndex = 0;
   autoPlayInterval: any;
   trailerUrls: { [key: number]: SafeResourceUrl } = {};
+  itemDetails: { [key: number]: any } = {};
   isMuted = true;
 
   router = inject(Router);
@@ -252,25 +253,71 @@ export class HeroCarousel implements OnInit, OnDestroy {
   fetchTrailers() {
     this.items.forEach(item => {
       const type = item.media_type === 'movie' || (item.title && !item.first_air_date) ? 'movie' : 'series';
-      const obs = type === 'movie'
-        ? this.movieService.getMovieVideos(item.id.toString())
-        : this.movieService.getSeriesVideos(item.id.toString());
 
-      obs.subscribe({
-        next: (res) => {
-          const trailer = res.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
+      // Fetch Detailed Info (Runtime, Certifications)
+      const detailObs = type === 'movie'
+        ? this.movieService.obtenerMovie(item.id.toString())
+        : this.movieService.obtenerSerie(item.id.toString());
+
+      detailObs.subscribe({
+        next: (detail) => {
+          this.itemDetails[item.id] = detail;
+
+          // Also extract trailer while we have the detail (if append_to_response worked)
+          const videos = detail.videos?.results || [];
+          const trailer = videos.find((v: any) => v.type === 'Trailer' && v.site === 'YouTube');
           if (trailer) {
-            // Removed mute=1 from URL to allow programmed control
             const url = `https://www.youtube.com/embed/${trailer.key}?autoplay=1&controls=0&loop=1&playlist=${trailer.key}&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1`;
             this.trailerUrls[item.id] = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-            this.cdr.markForCheck();
 
-            // Re-apply mute state after a short delay to ensure iframe is ready
             setTimeout(() => this.applyAudioState(), 1000);
           }
+          this.cdr.markForCheck();
         }
       });
     });
+  }
+
+  getRuntime(id: number): string {
+    const detail = this.itemDetails[id];
+    if (!detail) return '...';
+
+    if (detail.runtime) {
+      const hours = Math.floor(detail.runtime / 60);
+      const minutes = detail.runtime % 60;
+      return hours > 0 ? `${hours} h ${minutes} min` : `${minutes} min`;
+    }
+
+    if (detail.number_of_seasons) {
+      return detail.number_of_seasons === 1 ? '1 Temporada' : `${detail.number_of_seasons} Temporadas`;
+    }
+
+    return '';
+  }
+
+  getCertification(id: number): string {
+    const detail = this.itemDetails[id];
+    if (!detail) return '...';
+
+    // Movie Certifications
+    if (detail.release_dates) {
+      const results = detail.release_dates.results || [];
+      const usResult = results.find((r: any) => r.iso_3166_1 === 'US') || results[0];
+      if (usResult && usResult.release_dates) {
+        return usResult.release_dates[0].certification || (detail.adult ? '18+' : '12+');
+      }
+    }
+
+    // TV Certifications
+    if (detail.content_ratings) {
+      const results = detail.content_ratings.results || [];
+      const usResult = results.find((r: any) => r.iso_3166_1 === 'US') || results[0];
+      if (usResult) {
+        return usResult.rating || (detail.adult ? '18+' : '12+');
+      }
+    }
+
+    return detail.adult ? '18+' : '12+';
   }
 
   navigateToDetail(item: Result) {
