@@ -122,20 +122,48 @@ import { CommonModule } from '@angular/common';
       </div>
 
       <!-- Mobile Menu -->
-      <div [class.hidden]="!mobileMenuOpen" class="md:hidden mt-4 pb-2">
-        <ul class="flex flex-col space-y-1">
-          <li><a routerLink="/cartelera" (click)="mobileMenuOpen = false" class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">CARTELERA</a></li>
-          <li><a routerLink="/estrenos" (click)="mobileMenuOpen = false" class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">ESTRENOS</a></li>
-          <li><a routerLink="/series" (click)="mobileMenuOpen = false" class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">SERIES</a></li>
-          <li><a routerLink="/favoritos" (click)="mobileMenuOpen = false" class="block px-4 py-3 text-gray-200 hover:text-white hover:bg-white/10 rounded-lg transition-all font-semibold">FAVORITOS</a></li>
+      <div [class.hidden]="!mobileMenuOpen" 
+           class="md:hidden absolute top-full left-0 w-full bg-gray-900/98 backdrop-blur-xl border-b border-white/10 shadow-2xl animate-fade-in-down">
+        <ul class="flex flex-col p-6 space-y-2">
           <li>
-            <div class="px-4 py-2 mt-2">
+            <a routerLink="/cartelera" (click)="mobileMenuOpen = false" 
+               routerLinkActive="text-yellow-400 bg-white/5"
+               class="block px-4 py-3 text-gray-200 hover:text-white rounded-lg transition-all font-bold tracking-wide">
+               CARTELERA
+            </a>
+          </li>
+          <li>
+            <a routerLink="/estrenos" (click)="mobileMenuOpen = false" 
+               routerLinkActive="text-yellow-400 bg-white/5"
+               class="block px-4 py-3 text-gray-200 hover:text-white rounded-lg transition-all font-bold tracking-wide">
+               ESTRENOS
+            </a>
+          </li>
+          <li>
+            <a routerLink="/series" (click)="mobileMenuOpen = false" 
+               routerLinkActive="text-yellow-400 bg-white/5"
+               class="block px-4 py-3 text-gray-200 hover:text-white rounded-lg transition-all font-bold tracking-wide">
+               SERIES
+            </a>
+          </li>
+          <li>
+            <a routerLink="/favoritos" (click)="mobileMenuOpen = false" 
+               routerLinkActive="text-yellow-400 bg-white/5"
+               class="block px-4 py-3 text-gray-200 hover:text-white rounded-lg transition-all font-bold tracking-wide">
+               FAVORITOS
+            </a>
+          </li>
+          <li class="pt-4 border-t border-white/5">
+            <div class="relative">
               <input 
                 type="text" 
                 [(ngModel)]="searchQuery" 
                 (keyup.enter)="search()"
                 placeholder="Buscar..."
-                class="w-full bg-white/5 border-2 border-gray-700/50 text-white placeholder-gray-400 rounded-lg px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-yellow-400 focus:bg-white/10">
+                class="w-full bg-white/5 border-2 border-gray-700/50 text-white placeholder-gray-400 rounded-lg px-4 py-3 pl-11 text-sm font-medium focus:outline-none focus:border-yellow-400 focus:bg-white/10">
+              <svg class="w-5 h-5 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
             </div>
           </li>
         </ul>
@@ -145,6 +173,19 @@ import { CommonModule } from '@angular/common';
   styles: `
       :host {
         display: block;
+      }
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-in-down {
+        animation: fadeInDown 0.3s ease-out forwards;
       }
     `,
   changeDetection: ChangeDetectionStrategy.OnPush,
