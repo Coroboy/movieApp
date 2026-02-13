@@ -231,6 +231,17 @@ export class SeriesDetail {
         this.showPlayer = true;
     }
 
+    playFromStart() {
+        if (this.serie?.seasons && this.serie.seasons.length > 0) {
+            const season1 = this.serie.seasons.find(s => s.season_number === 1);
+            this.selectedSeason = season1 || this.serie.seasons[0];
+            this.selectedSeasonNumber = this.selectedSeason.season_number;
+            this.loadSeasonData();
+        }
+        this.selectedEpisodeNumber = 1;
+        this.showPlayer = true;
+    }
+
     closePlayer() {
         this.showPlayer = false;
     }

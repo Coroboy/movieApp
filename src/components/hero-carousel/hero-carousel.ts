@@ -28,15 +28,15 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
             <img 
               [src]="'https://image.tmdb.org/t/p/original' + item.backdrop_path" 
               [alt]="item.title || item.name"
-              class="w-full h-full object-cover transition-transform"
+              class="w-full h-full object-cover transition-transform scale-100"
               [class.animate-ken-burns]="currentIndex === i">
             
             <!-- Video Overlay (YouTube Muted) -->
             @if (currentIndex === i && trailerUrls[item.id]) {
-              <div class="absolute inset-0 z-10 animate-fade-in transition-opacity duration-1000">
+              <div class="absolute inset-0 z-10 animate-fade-in transition-opacity duration-1000 bg-black">
                 <iframe 
                   [src]="trailerUrls[item.id]"
-                  class="w-full h-[150%] -top-[25%] absolute scale-[1.35] pointer-events-none"
+                  class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] pointer-events-none"
                   frameborder="0" 
                   allow="autoplay; encrypted-media">
                 </iframe>
@@ -90,32 +90,12 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                     </div>
                 </div>
 
-                <!-- Action Buttons - FIXED POSITION -->
+                <!-- Action Buttons Removed, except Mute -->
                 <div class="flex items-center gap-4 mt-8">
-                  <button (click)="navigateToDetail(item); $event.stopPropagation()"
-                          class="px-6 py-3 bg-[#1a1a1a] text-white font-black rounded-lg transition-all hover:bg-[#333] hover:scale-105 flex items-center gap-2 shadow-2xl">
-                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                    <span class="uppercase tracking-tight text-xs md:text-sm">
-                      Ver Tráiler
-                    </span>
-                  </button>
-
-                  <button (click)="navigateToDetail(item); $event.stopPropagation()"
-                          class="px-6 py-3 bg-white text-black font-black rounded-lg transition-all hover:opacity-90 hover:scale-105 flex items-center gap-2 shadow-2xl">
-                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM10 16.5v-9l6 4.5-6 4.5z" />
-                    </svg>
-                    <span class="uppercase tracking-tight text-xs md:text-sm">
-                      {{ (item.media_type === 'movie' || item.title) ? 'Ver Película' : 'Ver Serie' }}
-                    </span>
-                  </button>
-
-                  <!-- Mute/Unmute Button (Moved inside content) -->
+                  <!-- Mute/Unmute Button -->
                   <button
                     (click)="toggleMute(); $event.stopPropagation()"
-                    class="p-3.5 rounded-lg bg-black/40 hover:bg-black/60 border border-white/20 transition-all cursor-pointer flex items-center justify-center"
+                    class="p-3.5 rounded-lg bg-black/40 hover:bg-black/60 border border-white/20 transition-all cursor-pointer flex items-center justify-center shadow-2xl"
                     [title]="isMuted ? 'Activar sonido' : 'Desactivar sonido'">
                     @if (isMuted) {
                       <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -178,6 +158,13 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
     }
     .animate-fade-in-up {
       animation: fadeInUp 0.8s ease-out forwards;
+    }
+    .animate-ken-burns {
+      animation: kenburns 20s linear infinite alternate;
+    }
+    @keyframes kenburns {
+      from { transform: scale(1); }
+      to { transform: scale(1.1); }
     }
     @keyframes fadeInUp {
       from {
