@@ -22,7 +22,7 @@ export class MovieService {
   }
 
   obtenerMovie(id: string) {
-    return this.http.get<MovieDetail>(`${this.API_URL}movie/${id}?language=es-ES&api_key=${this.API_KEY}&append_to_response=release_dates,videos`)
+    return this.http.get<MovieDetail>(`${this.API_URL}movie/${id}?language=es-ES&api_key=${this.API_KEY}&append_to_response=release_dates,videos,credits`)
   }
 
   obtenerSeriesTopRated(page: number = 1) {
@@ -30,7 +30,7 @@ export class MovieService {
   }
 
   obtenerSerie(id: string) {
-    return this.http.get<MovieDetail>(`${this.API_URL}tv/${id}?language=es-ES&api_key=${this.API_KEY}&append_to_response=content_ratings,videos`)
+    return this.http.get<MovieDetail>(`${this.API_URL}tv/${id}?language=es-ES&api_key=${this.API_KEY}&append_to_response=content_ratings,videos,credits`)
   }
 
   obtenerTemporada(tvId: string, seasonNumber: number) {
@@ -55,6 +55,14 @@ export class MovieService {
 
   getSeriesVideos(id: string) {
     return this.http.get<VideoResponse>(`${this.API_URL}tv/${id}/videos?api_key=${this.API_KEY}`)
+  }
+
+  getActorDetails(id: string) {
+    return this.http.get<any>(`${this.API_URL}person/${id}?language=es-ES&api_key=${this.API_KEY}`)
+  }
+
+  getActorCredits(id: string) {
+    return this.http.get<any>(`${this.API_URL}person/${id}/combined_credits?language=es-ES&api_key=${this.API_KEY}`)
   }
 
   filterResults(results: Result[]): Result[] {

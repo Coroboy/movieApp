@@ -8,9 +8,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="w-full max-w-5xl mx-auto flex items-center justify-center min-h-[50vh]">
+    <div class="w-full h-full flex items-center justify-center p-4">
       <!-- Player Container -->
-      <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-gray-800/50 group">
+      <div class="relative w-full max-w-6xl aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] border border-white/5 group">
         
         @if (!isPlaying) {
           <!-- Splash Screen / Poster -->
@@ -29,20 +29,14 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
             <div class="absolute inset-0 flex items-center justify-center">
               <div class="relative">
                 <!-- Glowing effect behind button -->
-                <div class="absolute inset-0 bg-purple-600 rounded-full blur-2xl opacity-40 group-hover:opacity-70 transition-opacity duration-500 animate-pulse"></div>
+                <div class="absolute inset-0 bg-white/20 rounded-full blur-2xl opacity-40 group-hover:opacity-70 transition-opacity duration-500 animate-pulse"></div>
                 
-                <button class="relative bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-full shadow-2xl transform transition-all duration-300 group-hover:scale-110 group-hover:bg-purple-600">
+                <button class="relative bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-full shadow-2xl transform transition-all duration-300 group-hover:scale-110 group-hover:bg-white/20">
                   <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </button>
               </div>
-            </div>
-
-            <!-- Header Text in Splash -->
-            <div class="absolute bottom-10 left-10 right-10 flex flex-col items-center">
-               <span class="px-4 py-1.5 bg-purple-600 text-white text-xs font-black rounded-full uppercase tracking-widest mb-4 shadow-lg shadow-purple-600/50">Disponible Ahora</span>
-               <h3 class="text-3xl font-black text-white text-center drop-shadow-lg tracking-tight">Haz clic para reproducir</h3>
             </div>
           </div>
         } @else {
@@ -56,20 +50,20 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
               referrerpolicy="origin"
             ></iframe>
           } @else {
-            <div class="w-full h-full flex flex-col items-center justify-center text-gray-400 space-y-4 bg-gray-900">
-              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
-              <p class="animate-pulse font-bold tracking-widest uppercase text-xs">Iniciando Servidor...</p>
+            <div class="w-full h-full flex flex-col items-center justify-center text-gray-400 space-y-4 bg-gray-900/50">
+              <div class="w-12 h-12 border-4 border-white/10 border-t-white rounded-full animate-spin"></div>
+              <p class="animate-pulse font-black tracking-widest uppercase text-[10px] text-white/40">Iniciando Servidor...</p>
             </div>
           }
         }
       </div>
-
     </div>
   `,
   styles: [`
     :host {
       display: block;
       width: 100%;
+      height: 100%;
     }
     .animate-fade-in-up {
       animation: fadeInUp 0.5s ease-out;

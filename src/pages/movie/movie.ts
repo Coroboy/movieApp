@@ -1,6 +1,6 @@
 
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DomSanitizer, Meta, SafeResourceUrl, Title } from '@angular/platform-browser';
 import { MovieService } from '../../app/services/movieService';
 import { Result, MovieDetail } from '../../app/interfaces/interface';
@@ -12,7 +12,7 @@ import { MoviePlayer } from '../../components/movie-player/movie-player';
 
 @Component({
   selector: 'app-movie',
-  imports: [MovieCard, CurrencyPipe, DatePipe, CommonModule, MoviePlayer],
+  imports: [MovieCard, CurrencyPipe, DatePipe, CommonModule, MoviePlayer, RouterModule],
   templateUrl: './movie.html',
   styles: `
     :host {
@@ -61,6 +61,7 @@ export class Movie {
     this.activeRoute.params.subscribe(params => {
       this.movieId = params['id'];
       this.obtenerMovie();
+      window.scrollTo(0, 0);
     })
   }
 
@@ -226,11 +227,36 @@ export class Movie {
     this.showAllRecommendations = !this.showAllRecommendations;
   }
 
+  getDirector(): string {
+    if (!this.movie?.credits) return '';
+    const director = this.movie.credits.crew.find(person => person.job === 'Director');
+    return director ? director.name : '';
+  }
+
+  get mainActors(): any[] {
+    if (!this.movie?.credits) return [];
+    return this.movie.credits.cast.slice(0, 5);
+  }
+
+  get ratingScore(): number {
+    return this.movie ? Math.round(this.movie.vote_average * 10) : 0;
+  }
+
+  get ratingCircleStyle(): string {
+    const dashOffset = 251.2 - (251.2 * this.ratingScore) / 100;
+    return `stroke-dashoffset: ${dashOffset}; transition: stroke-dashoffset 1s ease-in-out;`;
+  }
+
   // Share functionality
   showShareMenu = false;
 
   toggleShareMenu() {
     this.showShareMenu = !this.showShareMenu;
+    if (this.showShareMenu) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
   }
 
   getShareUrl(): string {
@@ -246,6 +272,7 @@ export class Movie {
     const text = this.getShareText();
     window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
     this.showShareMenu = false;
+    document.body.classList.remove('overflow-hidden');
   }
 
   shareFacebook() {
@@ -253,6 +280,7 @@ export class Movie {
     // Direct Facebook share - opens Facebook in new window
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank', 'width=600,height=600');
     this.showShareMenu = false;
+    document.body.classList.remove('overflow-hidden');
   }
 
   shareTwitter() {
@@ -260,6 +288,7 @@ export class Movie {
     const text = this.getShareText();
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
     this.showShareMenu = false;
+    document.body.classList.remove('overflow-hidden');
   }
 
   shareEmail() {
@@ -268,6 +297,7 @@ export class Movie {
     const subject = this.movie ? `Te recomiendo: ${this.movie.title}` : 'Te recomiendo esta película';
     window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text + '\n\n' + url)}`;
     this.showShareMenu = false;
+    document.body.classList.remove('overflow-hidden');
   }
 
   copyLink() {
@@ -278,5 +308,6 @@ export class Movie {
       });
     }
     this.showShareMenu = false;
+    document.body.classList.remove('overflow-hidden');
   }
 }

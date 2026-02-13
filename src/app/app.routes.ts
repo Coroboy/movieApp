@@ -6,6 +6,7 @@ import { Series } from '../pages/series/series';
 import { SeriesDetail } from '../pages/series-detail/series-detail';
 import { Search } from '../pages/search/search';
 import { Favoritos } from '../pages/favoritos/favoritos';
+import { ActorDetail } from '../pages/actor-detail/actor-detail';
 
 export const routes: Routes = [
     {
@@ -35,6 +36,10 @@ export const routes: Routes = [
     {
         path: 'favoritos',
         component: Favoritos
+    },
+    {
+        path: 'actor/:id',
+        component: ActorDetail
     },
     {
         path: '**',
