@@ -10,25 +10,49 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   template: `
     <div class="w-full h-full flex flex-col items-center justify-center p-4">
       
-      <!-- Server Selection UI -->
-      <div class="w-full max-w-6xl mb-6 flex flex-wrap items-center justify-between gap-4 px-2">
-        <div class="flex items-center gap-3">
-          <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-          <h3 class="text-xs font-black uppercase tracking-[0.2em] text-white/60">Seleccionar Servidor</h3>
-        </div>
+      <!-- Server Selection UI Grouped by Language -->
+      <div class="w-full max-w-6xl mb-6 flex flex-wrap items-center justify-between gap-6 px-2">
         
-        <div class="flex flex-wrap gap-2">
-          @for (server of servers; track server.id) {
-            <button 
-              (click)="changeServer(server.id)"
-              [class]="currentServer === server.id 
-                ? 'bg-white text-black border-white' 
-                : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-white'"
-              class="px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all duration-300"
-            >
-              {{ server.name }}
-            </button>
-          }
+        <!-- Spanish Section -->
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Español</span>
+            <div class="h-[1px] w-8 bg-white/10"></div>
+          </div>
+          <div class="flex gap-2">
+            @for (server of getServersByLang('es'); track server.id) {
+              <button 
+                (click)="changeServer(server.id)"
+                [class]="currentServer === server.id 
+                  ? 'bg-white text-black border-white' 
+                  : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-white'"
+                class="px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all duration-300"
+              >
+                {{ server.name }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- English Section -->
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">English</span>
+            <div class="h-[1px] w-8 bg-white/10"></div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            @for (server of getServersByLang('en'); track server.id) {
+              <button 
+                (click)="changeServer(server.id)"
+                [class]="currentServer === server.id 
+                  ? 'bg-white text-black border-white' 
+                  : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-white'"
+                class="px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all duration-300"
+              >
+                {{ server.name }}
+              </button>
+            }
+          </div>
         </div>
       </div>
 
@@ -88,7 +112,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
         </svg>
         <div>
           <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">Sugerencia de Reproducción</p>
-          <p class="text-xs text-white/40 leading-relaxed font-medium">Si el contenido se queda en negro o no carga, intenta cambiar al <span class="text-white">Servidor 2 o 3</span>. Algunos servidores pueden tardar unos segundos en encontrar el archivo.</p>
+          <p class="text-xs text-white/40 leading-relaxed font-medium">Usa la sección <span class="text-white">Español</span> para contenido doblado (Vimeus) o <span class="text-white">English</span> para versión original. Si un servidor falla, intenta con los demás.</p>
         </div>
       </div>
     </div>
@@ -115,11 +139,15 @@ export class MoviePlayer implements OnChanges {
   currentServer: string = 'vimeus';
 
   servers = [
-    { id: 'vimeus', name: 'Servidor 1' },
-    { id: 'vidsrc', name: 'Servidor 2' },
-    { id: 'autoembed', name: 'Servidor 3' },
-    { id: 'embedso', name: 'Servidor 4' }
+    { id: 'vimeus', name: 'Vimeus', lang: 'es' },
+    { id: 'vidlink', name: 'VidLink', lang: 'en' },
+    { id: 'vidsrc', name: 'VidSrc', lang: 'en' },
+    { id: 'autoembed', name: 'AutoEmbed', lang: 'en' }
   ];
+
+  getServersByLang(lang: 'es' | 'en') {
+    return this.servers.filter(s => s.lang === lang);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tmdbId'] || changes['type'] || changes['season'] || changes['episode']) {
@@ -153,7 +181,12 @@ export class MoviePlayer implements OnChanges {
       case 'vimeus':
         url = this.type === 'movie'
           ? `https://vimeus.com/e/movie?tmdb=${this.tmdbId}&view_key=${vimeusKey}`
-          : `https://vimeus.com/e/serie?tmdb=${this.tmdbId}&se=${s}&ep=${e}&view_key=${vimeusKey}`;
+          : `https://vimeus.com/e/serie?tmdb=${this.tmdbId}&s=${s}&e=${e}&view_key=${vimeusKey}`;
+        break;
+      case 'vidlink':
+        url = this.type === 'movie'
+          ? `https://vidlink.pro/movie/${this.tmdbId}`
+          : `https://vidlink.pro/tv/${this.tmdbId}/${s}/${e}`;
         break;
       case 'vidsrc':
         url = this.type === 'movie'
@@ -164,11 +197,6 @@ export class MoviePlayer implements OnChanges {
         url = this.type === 'movie'
           ? `https://player.autoembed.cc/embed/movie/${this.tmdbId}`
           : `https://player.autoembed.cc/embed/tv/${this.tmdbId}/${s}/${e}`;
-        break;
-      case 'embedso':
-        url = this.type === 'movie'
-          ? `https://embed.so/embed/movie/${this.tmdbId}`
-          : `https://embed.so/embed/tv/${this.tmdbId}/${s}/${e}`;
         break;
     }
 
