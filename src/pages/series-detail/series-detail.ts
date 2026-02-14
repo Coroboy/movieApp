@@ -207,11 +207,20 @@ export class SeriesDetail {
     loadTrailer() {
         this.movieS.getSeriesVideos(this.serieId).subscribe({
             next: (response) => {
-                const trailer = response.results.find(
+                const trailers = response.results.filter(
                     video => video.type === 'Trailer' && video.site === 'YouTube'
                 );
-                if (trailer) {
-                    this.trailerKey = trailer.key;
+
+                // Sort priority: es-MX > es > en > others (excluding es-ES)
+                const bestTrailer = trailers.find(v => v.iso_3166_1 === 'MX') ||
+                    trailers.find(v => v.iso_639_1 === 'es' && v.iso_3166_1 !== 'ES') ||
+                    trailers.find(v => v.iso_639_1 === 'en');
+
+                if (bestTrailer) {
+                    this.trailerKey = bestTrailer.key;
+                } else if (trailers.length > 0) {
+                    // Final fallback to first available if no preferred match
+                    this.trailerKey = trailers[0].key;
                 }
             },
             error: (err) => console.log('Error loading trailer', err)

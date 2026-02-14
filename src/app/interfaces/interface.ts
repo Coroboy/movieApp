@@ -133,6 +133,8 @@ export interface Video {
     type: string;
     name: string;
     official: boolean;
+    iso_639_1: string;
+    iso_3166_1: string;
 }
 
 export interface VideoResponse {

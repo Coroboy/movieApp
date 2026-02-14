@@ -8,7 +8,30 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="w-full h-full flex items-center justify-center p-4">
+    <div class="w-full h-full flex flex-col items-center justify-center p-4">
+      
+      <!-- Server Selection UI -->
+      <div class="w-full max-w-6xl mb-6 flex flex-wrap items-center justify-between gap-4 px-2">
+        <div class="flex items-center gap-3">
+          <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+          <h3 class="text-xs font-black uppercase tracking-[0.2em] text-white/60">Seleccionar Servidor</h3>
+        </div>
+        
+        <div class="flex flex-wrap gap-2">
+          @for (server of servers; track server.id) {
+            <button 
+              (click)="changeServer(server.id)"
+              [class]="currentServer === server.id 
+                ? 'bg-white text-black border-white' 
+                : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-white'"
+              class="px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all duration-300"
+            >
+              {{ server.name }}
+            </button>
+          }
+        </div>
+      </div>
+
       <!-- Player Container -->
       <div class="relative w-full max-w-6xl aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] border border-white/5 group">
         
@@ -57,6 +80,17 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
           }
         }
       </div>
+
+      <!-- Helper / Warning -->
+      <div class="mt-6 flex items-start gap-4 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 max-w-2xl">
+        <svg class="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">Sugerencia de Reproducción</p>
+          <p class="text-xs text-white/40 leading-relaxed font-medium">Si el contenido se queda en negro o no carga, intenta cambiar al <span class="text-white">Servidor 2 o 3</span>. Algunos servidores pueden tardar unos segundos en encontrar el archivo.</p>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
@@ -64,13 +98,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
       display: block;
       width: 100%;
       height: 100%;
-    }
-    .animate-fade-in-up {
-      animation: fadeInUp 0.5s ease-out;
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
     }
   `]
 })
@@ -87,9 +114,15 @@ export class MoviePlayer implements OnChanges {
 
   currentServer: string = 'vimeus';
 
+  servers = [
+    { id: 'vimeus', name: 'Servidor 1' },
+    { id: 'vidsrc', name: 'Servidor 2' },
+    { id: 'autoembed', name: 'Servidor 3' },
+    { id: 'embedso', name: 'Servidor 4' }
+  ];
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tmdbId'] || changes['type'] || changes['season'] || changes['episode']) {
-      // If content changes while playing, reposition logic
       if (this.isPlaying) {
         this.updateUrl();
       }
@@ -101,6 +134,13 @@ export class MoviePlayer implements OnChanges {
     this.updateUrl();
   }
 
+  changeServer(serverId: string) {
+    this.currentServer = serverId;
+    if (this.isPlaying) {
+      this.updateUrl();
+    }
+  }
+
   private updateUrl(): void {
     if (!this.tmdbId) return;
 
@@ -109,11 +149,27 @@ export class MoviePlayer implements OnChanges {
     const e = this.episode || 1;
     const vimeusKey = 'tXeWzSb3_zmKvo2bxgBWGhSEF2whYDigAMj8qdcacZc';
 
-    // We use Vimeus as the primary elegant solution requested
-    if (this.type === 'movie') {
-      url = `https://vimeus.com/e/movie?tmdb=${this.tmdbId}&view_key=${vimeusKey}`;
-    } else {
-      url = `https://vimeus.com/e/serie?tmdb=${this.tmdbId}&se=${s}&ep=${e}&view_key=${vimeusKey}`;
+    switch (this.currentServer) {
+      case 'vimeus':
+        url = this.type === 'movie'
+          ? `https://vimeus.com/e/movie?tmdb=${this.tmdbId}&view_key=${vimeusKey}`
+          : `https://vimeus.com/e/serie?tmdb=${this.tmdbId}&se=${s}&ep=${e}&view_key=${vimeusKey}`;
+        break;
+      case 'vidsrc':
+        url = this.type === 'movie'
+          ? `https://vidsrc.me/embed/movie?tmdb=${this.tmdbId}`
+          : `https://vidsrc.me/embed/tv?tmdb=${this.tmdbId}&sea=${s}&epi=${e}`;
+        break;
+      case 'autoembed':
+        url = this.type === 'movie'
+          ? `https://player.autoembed.cc/embed/movie/${this.tmdbId}`
+          : `https://player.autoembed.cc/embed/tv/${this.tmdbId}/${s}/${e}`;
+        break;
+      case 'embedso':
+        url = this.type === 'movie'
+          ? `https://embed.so/embed/movie/${this.tmdbId}`
+          : `https://embed.so/embed/tv/${this.tmdbId}/${s}/${e}`;
+        break;
     }
 
     this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
