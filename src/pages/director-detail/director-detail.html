@@ -1,13 +1,13 @@
-@if (!isLoading && actor) {
+@if (!isLoading && director) {
 <div class="min-h-screen bg-black text-white selection:bg-white selection:text-black">
 
     <!-- Hero Section -->
     <div class="relative pt-14 pb-20 overflow-hidden">
         <div class="absolute inset-0 z-0">
             <div class="absolute inset-0 bg-gradient-to-b from-black/0 via-black/60 to-black z-10"></div>
-            @if (actor.profile_path) {
-            <img [src]="'https://image.tmdb.org/t/p/original' + actor.profile_path"
-                class="w-full h-full object-cover blur-3xl opacity-20 scale-110" [alt]="actor.name">
+            @if (director.profile_path) {
+            <img [src]="'https://image.tmdb.org/t/p/original' + director.profile_path"
+                class="w-full h-full object-cover blur-3xl opacity-20 scale-110" [alt]="director.name">
             }
         </div>
 
@@ -32,17 +32,17 @@
         <div class="container mx-auto px-6 md:px-16 relative z-20 pt-16">
             <div
                 class="flex flex-col md:flex-row gap-12 md:gap-20 items-center md:items-start text-center md:text-left">
-                <!-- Actor Portrait -->
+                <!-- Director Portrait -->
                 <div class="flex-shrink-0">
                     <div
                         class="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-white/5 shadow-[0_0_50px_rgba(255,255,255,0.05)]">
-                        @if (actor.profile_path) {
-                        <img [src]="'https://image.tmdb.org/t/p/w500' + actor.profile_path"
-                            class="w-full h-full object-cover" [alt]="actor.name">
+                        @if (director.profile_path) {
+                        <img [src]="'https://image.tmdb.org/t/p/w500' + director.profile_path"
+                            class="w-full h-full object-cover" [alt]="director.name">
                         } @else {
                         <div
                             class="w-full h-full bg-white/5 flex items-center justify-center text-4xl font-black opacity-20">
-                            {{ actor.name | slice:0:1 }}
+                            {{ director.name | slice:0:1 }}
                         </div>
                         }
                     </div>
@@ -52,50 +52,49 @@
                 <div class="flex-1 space-y-10">
                     <div class="space-y-4">
                         <span
-                            class="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-white/40 block">Personalidad</span>
+                            class="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-white/40 block">Director</span>
                         <h1
                             class="text-4xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-tight drop-shadow-2xl">
-                            {{
-                            actor.name }}</h1>
+                            {{ director.name }}</h1>
                     </div>
 
                     <!-- Vertical Metadata Layout for Clean Design -->
                     <div class="flex flex-col gap-6 text-left">
-                        @if (actor.birthday) {
+                        @if (director.birthday) {
                         <div class="flex flex-col gap-1 border-l-2 border-white/10 pl-4 py-1">
                             <span
                                 class="text-[10px] font-black uppercase tracking-widest text-white/30">Nacimiento</span>
-                            <span class="text-lg font-bold text-white/90">{{ actor.birthday | date:'longDate':'es'
+                            <span class="text-lg font-bold text-white/90">{{ director.birthday | date:'longDate':'es'
                                 }}</span>
                         </div>
                         }
-                        @if (actor.place_of_birth) {
+                        @if (director.place_of_birth) {
                         <div class="flex flex-col gap-1 border-l-2 border-white/10 pl-4 py-1">
                             <span class="text-[10px] font-black uppercase tracking-widest text-white/30">Origen</span>
-                            <span class="text-lg font-bold text-white/90">{{ actor.place_of_birth }}</span>
+                            <span class="text-lg font-bold text-white/90">{{ director.place_of_birth }}</span>
                         </div>
                         }
-                        @if (actor.known_for_department) {
+                        @if (director.known_for_department) {
                         <div class="flex flex-col gap-1 border-l-2 border-white/10 pl-4 py-1">
                             <span class="text-[10px] font-black uppercase tracking-widest text-white/30">Área
                                 Principal</span>
                             <span class="text-lg font-bold uppercase text-white/90 tracking-widest">{{
-                                actor.known_for_department }}</span>
+                                director.known_for_department }}</span>
                         </div>
                         }
                     </div>
 
-                    @if (actor.biography) {
+                    @if (director.biography) {
                     <div class="max-w-3xl space-y-4">
                         <span
                             class="block text-[10px] font-black uppercase tracking-widest text-white/30">Biografía</span>
                         <div class="relative">
                             <p
                                 class="text-white/70 text-base md:text-lg leading-relaxed font-medium transition-all duration-500">
-                                {{ showFullBiography ? actor.biography : (actor.biography | slice:0:400) }}
-                                {{ !showFullBiography && actor.biography.length > 400 ? '...' : '' }}
+                                {{ showFullBiography ? director.biography : (director.biography | slice:0:400) }}
+                                {{ !showFullBiography && director.biography.length > 400 ? '...' : '' }}
                             </p>
-                            @if (actor.biography.length > 400) {
+                            @if (director.biography.length > 400) {
                             <button (click)="showFullBiography = !showFullBiography"
                                 class="mt-4 text-yellow-400 hover:text-yellow-300 text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2 group">
                                 <span>{{ showFullBiography ? 'Leer menos' : 'Leer más' }}</span>
@@ -119,7 +118,7 @@
     <div class="w-full border-y border-white/10 bg-white/[0.02]">
         <div class="container mx-auto px-6 md:px-16 py-6">
             <h2 class="text-xs md:text-sm font-black uppercase tracking-[0.5em] text-white text-center md:text-left">
-                Filmografía</h2>
+                Filmografía Directiva</h2>
         </div>
     </div>
 
@@ -139,7 +138,7 @@
 <div class="min-h-screen bg-black flex items-center justify-center">
     <div class="flex flex-col items-center gap-4">
         <div class="w-12 h-12 border-4 border-white/10 border-t-white rounded-full animate-spin"></div>
-        <p class="text-white/40 text-[10px] font-black uppercase tracking-[0.3rem]">Cargando Talento...</p>
+        <p class="text-white/40 text-[10px] font-black uppercase tracking-[0.3rem]">Cargando Director...</p>
     </div>
 </div>
 }

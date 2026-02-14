@@ -5,17 +5,16 @@ import { MovieService } from '../../app/services/movieService';
 import { MovieCard } from '../../components/movie-card/movie-card';
 
 @Component({
-    selector: 'app-actor-detail',
+    selector: 'app-director-detail',
     standalone: true,
     imports: [CommonModule, RouterModule, MovieCard],
-    templateUrl: './actor-detail.html'
+    templateUrl: './director-detail.html'
 })
-export class ActorDetail implements OnInit {
+export class DirectorDetail implements OnInit {
     private route = inject(ActivatedRoute);
-    private router = inject(Router);
     public movieService = inject(MovieService);
 
-    actor: any = null;
+    director: any = null;
     credits: any[] = [];
     isLoading = true;
     showFullBiography = false;
@@ -25,16 +24,16 @@ export class ActorDetail implements OnInit {
             const id = params['id'];
             if (id) {
                 window.scrollTo(0, 0);
-                this.loadActorData(id);
+                this.loadDirectorData(id);
             }
         });
     }
 
-    loadActorData(id: string) {
+    loadDirectorData(id: string) {
         this.isLoading = true;
         this.movieService.getActorDetails(id).subscribe({
             next: (data) => {
-                this.actor = data;
+                this.director = data;
                 this.loadCredits(id);
             },
             error: () => this.isLoading = false
@@ -42,15 +41,22 @@ export class ActorDetail implements OnInit {
     }
 
     loadCredits(id: string) {
-        this.movieService.getActorCredits(id).subscribe({
+        this.movieS.getActorCredits(id).subscribe({
             next: (data) => {
+                // For directors, we search in 'crew' and filter by job 'Director'
+                const directingCredits = data.crew.filter((item: any) => item.job === 'Director');
+
                 // Sort by popularity and filter results with posters
-                this.credits = this.movieService.filterResults(data.cast)
+                this.credits = this.movieService.filterResults(directingCredits)
                     .sort((a: any, b: any) => b.popularity - a.popularity);
                 this.isLoading = false;
             },
             error: () => this.isLoading = false
         });
+    }
+
+    private get movieS() {
+        return this.movieService;
     }
 
     goBack() {

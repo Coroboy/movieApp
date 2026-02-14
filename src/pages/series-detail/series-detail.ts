@@ -221,15 +221,18 @@ export class SeriesDetail {
     openTrailer() {
         if (this.trailerKey) {
             this.showTrailer = true;
+            document.body.classList.add('overflow-hidden');
         }
     }
 
     closeTrailer() {
         this.showTrailer = false;
+        document.body.classList.remove('overflow-hidden');
     }
 
     openPlayer() {
         this.showPlayer = true;
+        document.body.classList.add('overflow-hidden');
     }
 
     playFromStart() {
@@ -241,10 +244,12 @@ export class SeriesDetail {
         }
         this.selectedEpisodeNumber = 1;
         this.showPlayer = true;
+        document.body.classList.add('overflow-hidden');
     }
 
     closePlayer() {
         this.showPlayer = false;
+        document.body.classList.remove('overflow-hidden');
     }
 
     selectEpisode(episode: any) {
@@ -299,11 +304,10 @@ export class SeriesDetail {
         this.showAllRecommendations = !this.showAllRecommendations;
     }
 
-    getDirector(): string {
-        if (!this.serie?.credits) return '';
+    getDirector(): any {
+        if (!this.serie?.credits) return null;
         const crew = this.serie.credits.crew;
-        const director = crew.find(person => person.job === 'Director' || person.job === 'Executive Producer' || person.job === 'Creator');
-        return director ? director.name : '';
+        return crew.find(person => person.job === 'Director' || person.job === 'Executive Producer' || person.job === 'Creator');
     }
 
     get mainActors(): any[] {
@@ -382,5 +386,9 @@ export class SeriesDetail {
         }
         this.showShareMenu = false;
         document.body.classList.remove('overflow-hidden');
+    }
+
+    goBack() {
+        window.history.back();
     }
 }

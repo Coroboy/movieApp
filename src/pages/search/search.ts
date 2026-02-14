@@ -9,8 +9,10 @@ import { Meta, Title } from '@angular/platform-browser';
   selector: 'app-search',
   imports: [MovieCard],
   template: `
-    <div class="container mx-auto px-4 py-8 min-h-screen pt-20">
-      <h2 class="text-3xl font-bold text-slate-800 mb-6 transition-colors">Resultados para: <span class="text-slate-600 italic">"{{ query }}"</span></h2>
+    <div class="container mx-auto px-4 py-8 min-h-screen pt-32">
+      <h2 class="text-2xl md:text-3xl font-black text-white/90 mb-12 uppercase tracking-tight transition-colors">
+        Resultados para: <span class="text-yellow-400 italic font-medium">"{{ query }}"</span>
+      </h2>
       
       @if (results.length > 0) {
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
@@ -74,7 +76,13 @@ export class Search {
       this.movieS.searchMovies(this.query, this.page).subscribe({
         next: (res) => {
           const filteredResults = this.movieS.filterResults(res.results);
-          this.results = [...this.results, ...filteredResults]
+          // Sort results by popularity and rating
+          const sortedResults = filteredResults.sort((a, b) => {
+            const scoreA = (a.popularity || 0) + (a.vote_average || 0) * 10;
+            const scoreB = (b.popularity || 0) + (b.vote_average || 0) * 10;
+            return scoreB - scoreA;
+          });
+          this.results = [...this.results, ...sortedResults]
         },
         error: (err) => console.log(err)
       })

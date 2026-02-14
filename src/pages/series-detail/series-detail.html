@@ -10,10 +10,28 @@
     </div>
 
     <!-- Main Content Container -->
-    <div class="relative z-10 w-full">
+    <div class="relative z-10 w-full pt-14">
+
+        <div class="fixed inset-x-0 top-14 z-[110] pointer-events-none transition-opacity duration-300"
+            [class.opacity-0]="movieS.isMenuOpen()">
+            <div class="container mx-auto px-6 md:px-16 relative">
+                <!-- Fixed Back Button Container -->
+                <div class="-ml-2 mb-2">
+                    <button (click)="goBack()"
+                        class="flex items-center gap-4 text-white/50 hover:text-white transition-all duration-300 group uppercase tracking-[0.3em] text-xs font-black cursor-pointer pointer-events-auto px-4 py-2 rounded-full hover:bg-white/10 hover:scale-105 active:scale-95">
+                        <svg class="w-8 h-8 p-1.5 rounded-full transition-colors" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7">
+                            </path>
+                        </svg>
+                        Volver
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- Hero Section -->
-        <div class="container mx-auto px-6 md:px-16 pt-32 pb-12">
+        <div class="container mx-auto px-6 md:px-16 pt-16 pb-12">
             <div class="max-w-4xl space-y-8 animate-fade-in-up">
 
                 <!-- Series Title / Logo -->
@@ -248,7 +266,13 @@
                             <div class="flex justify-between border-b border-white/5 pb-2">
                                 <span class="text-white/60 font-bold uppercase tracking-wider text-xs">Director /
                                     Productor</span>
-                                <span class="font-black text-xs text-right">{{ getDirector() }}</span>
+                                @if (getDirector(); as director) {
+                                <span
+                                    class="font-black text-xs text-right hover:text-yellow-400 cursor-pointer transition-colors"
+                                    [routerLink]="['/director', director.id]">
+                                    {{ director.name }}
+                                </span>
+                                }
                             </div>
                             <div class="flex justify-between border-b border-white/5 pb-2">
                                 <span class="text-white/60 font-bold uppercase tracking-wider text-xs">Estado</span>
@@ -279,35 +303,38 @@
     </div>
 
     <!-- Series Player Modal -->
-    @if (showPlayer) {
-    <div class="fixed inset-0 z-[200] flex items-center justify-center bg-black/98 animate-fade-in"
-        (click)="closePlayer()">
-        <div class="relative w-full h-full flex items-center justify-center" (click)="$event.stopPropagation()">
-            <!-- Close button with high z-index -->
+    <div class="fixed inset-0 z-[200] flex items-center justify-center bg-black/98 p-4 transition-all duration-500 ease-in-out"
+        (click)="closePlayer()" [class.opacity-100]="showPlayer" [class.pointer-events-auto]="showPlayer"
+        [class.opacity-0]="!showPlayer" [class.pointer-events-none]="!showPlayer">
+        <div class="relative w-full max-w-7xl aspect-video shadow-[0_0_100px_rgba(255,255,255,0.1)] transition-all duration-500 transform"
+            (click)="$event.stopPropagation()" [class.scale-100]="showPlayer" [class.opacity-100]="showPlayer"
+            [class.scale-95]="!showPlayer" [class.opacity-0]="!showPlayer">
+            <!-- Close button positioned above the player, matching trailer style -->
             <button (click)="closePlayer()"
-                class="absolute top-6 right-6 md:top-12 md:right-12 text-white/40 hover:text-white transition-all flex items-center gap-2 group cursor-pointer uppercase tracking-widest text-[10px] font-black z-[210]">
+                class="absolute -top-16 right-0 text-white/60 hover:text-white transition-all flex items-center gap-2 group cursor-pointer uppercase tracking-widest text-[10px] font-black z-[210]">
                 Cerrar
-                <svg class="w-10 h-10 p-2.5 rounded-full border border-white/10 group-hover:bg-white/10" fill="none"
+                <svg class="w-8 h-8 p-2 rounded-full border border-white/20 group-hover:bg-white/10" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
                 </svg>
             </button>
-            <div class="w-full h-full">
-                <app-movie-player [tmdbId]="serie.id" type="tv" [posterPath]="serie.backdrop_path"
-                    [season]="selectedSeasonNumber" [episode]="selectedEpisodeNumber">
+            <div class="w-full h-full rounded-xl overflow-hidden bg-black border border-white/10">
+                <app-movie-player *ngIf="showPlayer && serie" [tmdbId]="serie.id" type="tv"
+                    [posterPath]="serie.backdrop_path" [season]="selectedSeasonNumber"
+                    [episode]="selectedEpisodeNumber">
                 </app-movie-player>
             </div>
         </div>
     </div>
-    }
 
     <!-- Trailer Modal -->
-    @if (showTrailer && trailerUrl) {
-    <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 animate-fade-in"
-        (click)="closeTrailer()">
-        <div class="relative w-full max-w-6xl aspect-video shadow-[0_0_100px_rgba(255,255,255,0.1)]"
-            (click)="$event.stopPropagation()">
+    <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 transition-all duration-500 ease-in-out"
+        (click)="closeTrailer()" [class.opacity-100]="showTrailer" [class.pointer-events-auto]="showTrailer"
+        [class.opacity-0]="!showTrailer" [class.pointer-events-none]="!showTrailer">
+        <div class="relative w-full max-w-6xl aspect-video shadow-[0_0_100px_rgba(255,255,255,0.1)] transition-all duration-500 transform"
+            (click)="$event.stopPropagation()" [class.scale-100]="showTrailer" [class.opacity-100]="showTrailer"
+            [class.scale-95]="!showTrailer" [class.opacity-0]="!showTrailer">
             <button (click)="closeTrailer()"
                 class="absolute -top-16 right-0 text-white/60 hover:text-white transition-all flex items-center gap-2 group cursor-pointer uppercase tracking-widest text-[10px] font-black">
                 Cerrar
@@ -318,19 +345,19 @@
                 </svg>
             </button>
             <div class="w-full h-full rounded-xl overflow-hidden bg-black border border-white/10">
-                <iframe [src]="trailerUrl" class="w-full h-full" frameborder="0"
+                <iframe *ngIf="showTrailer && trailerUrl" [src]="trailerUrl" class="w-full h-full" frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen>
                 </iframe>
             </div>
         </div>
     </div>
-    }
     <!-- Share Modal -->
-    @if (showShareMenu) {
-    <div class="fixed inset-0 z-[300] flex items-center justify-center bg-black/40 transition-all animate-fade-in">
-        <div
-            class="w-[90%] max-w-sm bg-gray-900 border border-white/10 rounded-2xl shadow-[0_0_100px_rgba(0,0,0,0.9)] p-8 animate-fade-in-up">
+    <div class="fixed inset-0 z-[300] flex items-center justify-center bg-black/40 transition-all duration-500 ease-in-out cursor-pointer"
+        (click)="toggleShareMenu()" [class.opacity-0]="!showShareMenu" [class.pointer-events-none]="!showShareMenu">
+        <div class="w-[90%] max-w-sm bg-gray-900 border border-white/10 rounded-2xl shadow-[0_0_100px_rgba(0,0,0,0.9)] p-8 transition-all duration-500 transform cursor-default"
+            (click)="$event.stopPropagation()" [class.scale-90]="!showShareMenu" [class.scale-100]="showShareMenu"
+            [class.opacity-0]="!showShareMenu">
             <div class="flex items-center justify-between mb-8">
                 <h3 class="text-xl font-black uppercase tracking-widest text-white">Compartir</h3>
                 <button (click)="toggleShareMenu()"
@@ -397,7 +424,6 @@
             </button>
         </div>
     </div>
-    }
 
 </div>
 } @else {

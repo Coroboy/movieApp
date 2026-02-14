@@ -189,19 +189,23 @@ export class Movie {
   openTrailer() {
     if (this.trailerKey) {
       this.showTrailer = true;
+      document.body.classList.add('overflow-hidden');
     }
   }
 
   closeTrailer() {
     this.showTrailer = false;
+    document.body.classList.remove('overflow-hidden');
   }
 
   openPlayer() {
     this.showPlayer = true;
+    document.body.classList.add('overflow-hidden');
   }
 
   closePlayer() {
     this.showPlayer = false;
+    document.body.classList.remove('overflow-hidden');
   }
 
   obtenerRecomendaciones(id: string) {
@@ -227,10 +231,9 @@ export class Movie {
     this.showAllRecommendations = !this.showAllRecommendations;
   }
 
-  getDirector(): string {
-    if (!this.movie?.credits) return '';
-    const director = this.movie.credits.crew.find(person => person.job === 'Director');
-    return director ? director.name : '';
+  getDirector(): any {
+    if (!this.movie?.credits) return null;
+    return this.movie.credits.crew.find(person => person.job === 'Director');
   }
 
   get mainActors(): any[] {
@@ -309,5 +312,9 @@ export class Movie {
     }
     this.showShareMenu = false;
     document.body.classList.remove('overflow-hidden');
+  }
+
+  goBack() {
+    window.history.back();
   }
 }

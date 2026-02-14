@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { MovieDetail, Response, Result, VideoResponse } from '../interfaces/interface';
@@ -11,6 +11,10 @@ export class MovieService {
   http = inject(HttpClient)
   API_URL = environment.api_url
   API_KEY = environment.api_key
+
+  // Global state for mobile menu
+  isMenuOpen = signal(false);
+
   constructor() { }
 
   obtenerCartelera(page: number = 1) {
