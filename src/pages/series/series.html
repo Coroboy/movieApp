@@ -19,11 +19,17 @@
         </div>
     </div>
     } @else {
-    <!-- Vertical Grid Layout -->
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-        @for (serie of filteredMovies; track serie.id) {
-        <app-movie-card [movie]="serie" [type]="'tv'"></app-movie-card>
-        }
+    <!-- Single Row Horizontal Carousel -->
+    <div class="space-y-6">
+        <h2 class="text-xl md:text-2xl font-black uppercase tracking-widest text-white/90">
+            {{ selectedCategoryId === 0 ? 'Series Destacadas' : selectedCategoryName }}
+        </h2>
+        <div #carouselContainer class="flex overflow-x-auto gap-4 md:gap-6 pb-8 no-scrollbar scroll-smooth">
+            @for (serie of filteredMovies; track serie.id) {
+            <app-movie-card [movie]="serie" [type]="'tv'"
+                class="flex-shrink-0 w-44 md:w-64 hover:scale-105 transition-transform duration-300"></app-movie-card>
+            }
+        </div>
     </div>
     }
 </div>

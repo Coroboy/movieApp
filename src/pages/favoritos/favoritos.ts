@@ -11,7 +11,7 @@ import { FavoritesService } from '../../app/services/favorites.service';
     <div class="w-full px-4 md:px-12 py-8 pt-20">
       
       @if (favorites.length > 0) {
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4">
           @for (item of favorites; track item.id) {
             <app-movie-card [movie]="item" [type]="item.media_type === 'tv' ? 'tv' : 'movie'"></app-movie-card>
           }

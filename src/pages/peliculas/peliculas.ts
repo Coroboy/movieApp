@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { MovieService } from '../../app/services/movieService';
 import { Result } from '../../app/interfaces/interface';
 import { MovieCard } from '../../components/movie-card/movie-card';
@@ -21,11 +22,18 @@ import { CategoryMenu, Category } from '../../components/category-menu/category-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Peliculas implements OnInit {
+  activeRoute = inject(ActivatedRoute)
   peliculas: Result[] = []
   genreGroups: GenreGroup[] = []
   filteredMovies: Result[] = []
   categories: Category[] = []
   selectedCategoryId: number = 0
+  get selectedCategoryName(): string {
+    const category = this.categories.find(c => c.id === this.selectedCategoryId);
+    return category ? category.name : '';
+  }
+
+  @ViewChild('carouselContainer') carouselContainer!: ElementRef;
 
   movieS = inject(MovieService)
   meta = inject(Meta)
@@ -87,11 +95,20 @@ export class Peliculas implements OnInit {
           { id: 0, name: 'Destacados' },
           ...this.genreGroups.map(g => ({ id: g.genreId, name: g.genreName }))
         ];
-        this.filteredMovies = this.peliculas;
+
+        // Check for genreId in query parameters
+        const genreIdParam = this.activeRoute.snapshot.queryParamMap.get('genreId');
+        if (genreIdParam) {
+          const genreId = parseInt(genreIdParam, 10);
+          this.onCategorySelected(genreId);
+        } else {
+          this.filteredMovies = this.peliculas;
+        }
+
         this.loading = false
         this.cdr.markForCheck()
       },
-      error: (err) => {
+      error: (err: any) => {
         console.log('Error', err)
         this.loading = false
       }
@@ -130,6 +147,12 @@ export class Peliculas implements OnInit {
       const genreGroup = this.genreGroups.find(g => g.genreId === genreId);
       this.filteredMovies = genreGroup ? genreGroup.items : [];
     }
+
+    // Scroll to top/left of the carousel
+    if (this.carouselContainer) {
+      this.carouselContainer.nativeElement.scrollLeft = 0;
+    }
+
     this.cdr.markForCheck();
   }
 }

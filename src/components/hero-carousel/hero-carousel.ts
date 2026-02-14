@@ -17,7 +17,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
       
       @for (item of items; track item.id; let i = $index) {
         <div 
-          class="absolute inset-0 transition-opacity duration-1000"
+          class="absolute inset-0 transition-opacity duration-1000 ease-in-out"
           [class.opacity-100]="currentIndex === i"
           [class.opacity-0]="currentIndex !== i"
           [class.z-10]="currentIndex === i">
@@ -41,14 +41,14 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
           </div>
 
           <!-- Content -->
-          <div class="relative h-full max-w-[1800px] mx-auto px-12 md:px-24 flex items-center z-30">
-            <div class="max-w-3xl animate-fade-in-up">
+          <div class="relative h-full w-full pl-16 md:pl-28 pr-6 md:pr-12 flex items-center z-30">
+            <div class="w-full animate-fade-in-up">
               <!-- Content Wrapper with Fixed Bottom Alignment for Buttons -->
               <div class="flex flex-col h-full justify-center">
                 
                 <div class="space-y-4 md:space-y-6">
                     <!-- Title -->
-                    <h1 class="text-xl md:text-3xl lg:text-4xl font-black text-white leading-tight drop-shadow-2xl">
+                    <h1 class="text-3xl md:text-5xl lg:text-7xl font-black text-white leading-tight drop-shadow-2xl">
                       {{ (item.title || item.name) | uppercase }}
                     </h1>
                     
@@ -71,8 +71,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                     </div>
 
                     <!-- Description with Fixed Height Container -->
-                    <div class="min-h-[50px] md:min-h-[80px] max-w-xl">
-                        <p class="text-white/80 text-xs md:text-sm leading-relaxed line-clamp-2 font-medium">
+                    <div class="min-h-[50px] md:min-h-[80px] md:max-w-[50%]">
+                        <p class="text-white/80 text-sm md:text-lg lg:text-xl leading-relaxed line-clamp-2 font-medium">
                           {{ item.overview }}
                         </p>
                     </div>
@@ -86,7 +86,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
       <!-- Improved Navigation Arrows - Visible on Mobile -->
       <button 
         (click)="prevSlide(); $event.stopPropagation()"
-        class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 p-2 text-white/20 hover:text-white transition-all z-40 cursor-pointer">
+        class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 p-2 text-yellow-400/40 hover:text-yellow-400 transition-all z-40 cursor-pointer">
         <svg class="w-8 h-8 md:w-14 md:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
         </svg>
@@ -94,7 +94,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
       <button 
         (click)="nextSlide(); $event.stopPropagation()"
-        class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 p-2 text-white/20 hover:text-white transition-all z-40 cursor-pointer">
+        class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 p-2 text-yellow-400/40 hover:text-yellow-400 transition-all z-40 cursor-pointer">
         <svg class="w-8 h-8 md:w-14 md:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
         </svg>
@@ -136,11 +136,11 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px) scale(0.98);
       }
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
     }
     @keyframes fadeIn {

@@ -32,27 +32,29 @@ import { CommonModule } from '@angular/common';
           </span>
         </a>
 
-        <!-- Desktop Navigation Links -->
-        <ul class="hidden md:flex items-center space-x-1">
-          <li>
-            <a routerLink="/peliculas" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
-               class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide">
-              PELÍCULAS
-            </a>
-          </li>
-          <li>
-            <a routerLink="/series" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
-               class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide">
-              SERIES
-            </a>
-          </li>
-          <li>
-            <a routerLink="/favoritos" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
-               class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide">
-              FAVORITOS
-            </a>
-          </li>
-        </ul>
+        <!-- Desktop Navigation Links - ABSOLUTELY CENTERED RELATIVE TO SCREEN -->
+        <div class="hidden md:flex absolute inset-x-0 bottom-3.5 items-center justify-center pointer-events-none">
+          <ul class="flex items-center space-x-1 pointer-events-auto">
+            <li>
+              <a routerLink="/peliculas" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
+                 class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide">
+                PELÍCULAS
+              </a>
+            </li>
+            <li>
+              <a routerLink="/series" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
+                 class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide">
+                SERIES
+              </a>
+            </li>
+            <li>
+              <a routerLink="/favoritos" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
+                 class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide">
+                FAVORITOS
+              </a>
+            </li>
+          </ul>
+        </div>
 
         <!-- Right Side Actions -->
         <div class="flex items-center space-x-2">
@@ -81,7 +83,7 @@ import { CommonModule } from '@angular/common';
 
       <!-- Unified Search Input Box (Drops down for both desktop and mobile) -->
       <div (click)="$event.stopPropagation()"
-           class="absolute top-[calc(100%+8px)] left-0 right-0 mx-4 bg-gray-900/98 backdrop-blur-3xl border border-white/10 p-6 md:p-8 rounded-[35px] md:rounded-[45px] shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) z-[1010]"
+           class="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-[95%] md:w-full md:max-w-7xl bg-gray-900/98 backdrop-blur-3xl border border-white/10 p-6 md:p-8 rounded-[35px] md:rounded-[45px] shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) z-[1010]"
            [class.opacity-100]="mobileSearchActive"
            [class.translate-y-0]="mobileSearchActive"
            [class.scale-100]="mobileSearchActive"
