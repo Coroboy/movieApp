@@ -12,7 +12,7 @@ export interface Category {
   imports: [CommonModule],
   template: `
     <div class="relative w-full bg-transparent z-40 -mt-16 md:-mt-20">
-      <div class="container mx-auto px-6 md:px-16">
+      <div class="w-full px-6 md:px-12">
         <div class="flex items-center gap-8 md:gap-12 overflow-x-auto no-scrollbar scroll-smooth py-6">
           @for (category of categories; track category.id) {
             <button

@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
-import { Cartelera } from '../pages/cartelera/cartelera';
-import { Estrenos } from '../pages/estrenos/estrenos';
+import { Peliculas } from '../pages/peliculas/peliculas';
 import { Movie } from '../pages/movie/movie';
 import { Series } from '../pages/series/series';
 import { SeriesDetail } from '../pages/series-detail/series-detail';
@@ -11,12 +10,16 @@ import { DirectorDetail } from '../pages/director-detail/director-detail';
 
 export const routes: Routes = [
     {
+        path: 'peliculas',
+        component: Peliculas
+    },
+    {
         path: 'cartelera',
-        component: Cartelera
+        redirectTo: 'peliculas'
     },
     {
         path: 'estrenos',
-        component: Estrenos
+        redirectTo: 'peliculas'
     },
     {
         path: 'movie/:id',
@@ -49,6 +52,6 @@ export const routes: Routes = [
     {
         path: '**',
         pathMatch: 'full',
-        redirectTo: 'cartelera'
+        redirectTo: 'peliculas'
     }
 ];

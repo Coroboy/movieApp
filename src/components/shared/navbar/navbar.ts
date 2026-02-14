@@ -17,11 +17,11 @@ import { CommonModule } from '@angular/common';
          [class.opacity-100]="mobileSearchActive || mobileMenuOpen"
          [class.!pointer-events-auto]="mobileSearchActive || mobileMenuOpen"></div>
 
-    <div class="relative z-[1010] max-w-screen-2xl mx-auto px-6 py-3.5">
+    <div class="relative z-[1010] w-full px-6 md:px-12 py-3.5">
       <div class="flex items-center justify-between">
         
         <!-- Logo -->
-        <a routerLink="/cartelera" (click)="closeAll()" class="flex items-center space-x-3 group cursor-pointer">
+        <a routerLink="/peliculas" (click)="closeAll()" class="flex items-center space-x-3 group cursor-pointer">
           <div class="relative">
             <svg class="w-10 h-10 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)] group-hover:drop-shadow-[0_0_12px_rgba(250,204,21,0.7)] transition-all" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"></path>
@@ -35,15 +35,9 @@ import { CommonModule } from '@angular/common';
         <!-- Desktop Navigation Links -->
         <ul class="hidden md:flex items-center space-x-1">
           <li>
-            <a routerLink="/cartelera" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
+            <a routerLink="/peliculas" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
                class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide">
-              CARTELERA
-            </a>
-          </li>
-          <li>
-            <a routerLink="/estrenos" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
-               class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide">
-              ESTRENOS
+              PELÍCULAS
             </a>
           </li>
           <li>
@@ -144,17 +138,10 @@ import { CommonModule } from '@angular/common';
            [class.pointer-events-none]="!mobileMenuOpen">
         <ul class="flex flex-col p-4 space-y-1">
           <li>
-            <a routerLink="/cartelera" (click)="closeAll()" 
+            <a routerLink="/peliculas" (click)="closeAll()" 
                routerLinkActive="text-yellow-400 bg-white/5"
                class="block px-6 py-4 text-gray-200 hover:text-white rounded-2xl transition-all font-bold tracking-wide">
-               CARTELERA
-            </a>
-          </li>
-          <li>
-            <a routerLink="/estrenos" (click)="closeAll()" 
-               routerLinkActive="text-yellow-400 bg-white/5"
-               class="block px-6 py-4 text-gray-200 hover:text-white rounded-2xl transition-all font-bold tracking-wide">
-               ESTRENOS
+               PELÍCULAS
             </a>
           </li>
           <li>

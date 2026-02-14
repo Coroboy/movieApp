@@ -9,7 +9,7 @@ import { Meta, Title } from '@angular/platform-browser';
   selector: 'app-search',
   imports: [MovieCard],
   template: `
-    <div class="container mx-auto px-4 py-8 min-h-screen pt-32">
+    <div class="w-full px-4 md:px-12 py-8 min-h-screen pt-32">
       <h2 class="text-2xl md:text-3xl font-black text-white/90 mb-12 uppercase tracking-tight transition-colors">
         Resultados para: <span class="text-yellow-400 italic font-medium">"{{ query }}"</span>
       </h2>

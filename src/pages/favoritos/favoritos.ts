@@ -8,7 +8,7 @@ import { FavoritesService } from '../../app/services/favorites.service';
   selector: 'app-favoritos',
   imports: [MovieCard],
   template: `
-    <div class="container mx-auto px-4 py-8 pt-20">
+    <div class="w-full px-4 md:px-12 py-8 pt-20">
       
       @if (favorites.length > 0) {
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
