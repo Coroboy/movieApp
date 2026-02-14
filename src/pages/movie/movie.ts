@@ -61,7 +61,6 @@ export class Movie {
     this.activeRoute.params.subscribe(params => {
       this.movieId = params['id'];
       this.obtenerMovie();
-      window.scrollTo(0, 0);
     })
   }
 

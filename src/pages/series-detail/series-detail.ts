@@ -79,7 +79,6 @@ export class SeriesDetail {
         this.activeRoute.params.subscribe(params => {
             this.serieId = params['id'];
             this.obtenerSerie();
-            window.scrollTo(0, 0);
         })
     }
 
