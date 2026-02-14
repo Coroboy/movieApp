@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MovieService } from '../../app/services/movieService';
 import { MovieCard } from '../../components/movie-card/movie-card';
+import { SeoService } from '../../app/services/seo.service';
 
 @Component({
     selector: 'app-director-detail',
@@ -13,6 +14,7 @@ import { MovieCard } from '../../components/movie-card/movie-card';
 export class DirectorDetail implements OnInit {
     private route = inject(ActivatedRoute);
     public movieService = inject(MovieService);
+    private seoService = inject(SeoService);
 
     director: any = null;
     credits: any[] = [];
@@ -32,8 +34,9 @@ export class DirectorDetail implements OnInit {
     loadDirectorData(id: string) {
         this.isLoading = true;
         this.movieService.getActorDetails(id).subscribe({
-            next: (data) => {
+            next: (data: any) => {
                 this.director = data;
+                this.seoService.updatePersonTags(this.director);
                 this.loadCredits(id);
             },
             error: () => this.isLoading = false
@@ -42,7 +45,7 @@ export class DirectorDetail implements OnInit {
 
     loadCredits(id: string) {
         this.movieS.getActorCredits(id).subscribe({
-            next: (data) => {
+            next: (data: any) => {
                 // For directors, we search in 'crew' and filter by job 'Director'
                 const directingCredits = data.crew.filter((item: any) => item.job === 'Director');
 

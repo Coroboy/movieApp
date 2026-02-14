@@ -31,7 +31,7 @@ import { Meta, Title } from '@angular/platform-browser';
           <svg class="w-16 h-16 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          <p class="text-2xl text-gray-400 font-medium">No se encontraron resultados para su búsqueda.</p>
+          <p class="text-2xl text-white font-medium">No se encontraron resultados para su búsqueda.</p>
         </div>
       }
     </div>

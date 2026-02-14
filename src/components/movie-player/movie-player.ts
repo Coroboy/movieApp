@@ -1,5 +1,5 @@
 
-import { Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
@@ -125,7 +125,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
     }
   `]
 })
-export class MoviePlayer implements OnChanges {
+export class MoviePlayer implements OnChanges, OnDestroy {
   @Input({ required: true }) tmdbId!: string | number;
   @Input({ required: true }) posterPath!: string;
   @Input() type: 'movie' | 'tv' = 'movie';
@@ -201,5 +201,11 @@ export class MoviePlayer implements OnChanges {
     }
 
     this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  ngOnDestroy(): void {
+    // Explicitly clear the URL and state to ensure the iframe is destroyed and audio stops
+    this.safeUrl = null;
+    this.isPlaying = false;
   }
 }

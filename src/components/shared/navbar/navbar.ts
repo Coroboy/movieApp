@@ -48,6 +48,12 @@ import { CommonModule } from '@angular/common';
               </a>
             </li>
             <li>
+              <a routerLink="/anime" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
+                 class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide uppercase">
+                ANIME
+              </a>
+            </li>
+            <li>
               <a routerLink="/favoritos" routerLinkActive="text-white font-bold bg-white/10 shadow-lg shadow-white/5"
                  class="px-5 py-2.5 text-gray-200 hover:text-white text-sm font-semibold rounded-lg hover:bg-white/5 transition-all duration-200 tracking-wide">
                 FAVORITOS
@@ -151,6 +157,13 @@ import { CommonModule } from '@angular/common';
                routerLinkActive="text-yellow-400 bg-white/5"
                class="block px-6 py-4 text-gray-200 hover:text-white rounded-2xl transition-all font-bold tracking-wide">
                SERIES
+            </a>
+          </li>
+          <li>
+            <a routerLink="/anime" (click)="closeAll()" 
+               routerLinkActive="text-yellow-400 bg-white/5"
+               class="block px-6 py-4 text-gray-200 hover:text-white rounded-2xl transition-all font-bold tracking-wide uppercase">
+               ANIME
             </a>
           </li>
           <li>
@@ -281,8 +294,16 @@ export class Navbar {
   }
 
   navigateToResult(result: Result) {
-    const type = result.media_type === 'movie' ? 'movie' : 'series';
-    this.router.navigate([`/${type}`, result.id]);
+    const isActuallyAnime = this.movieService.isAnime(result);
+    const mediaType = result.media_type === 'tv' ? 'series' : 'movie';
+
+    if (isActuallyAnime) {
+      this.router.navigate([`/anime/${mediaType}`, result.id]);
+    } else {
+      const routeType = mediaType === 'series' ? 'series' : 'movie';
+      this.router.navigate([`/${routeType}`, result.id]);
+    }
+
     this.searchQuery = '';
     this.searchResults = [];
     this.closeAll();

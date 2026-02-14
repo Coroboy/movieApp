@@ -12,9 +12,9 @@ import { FormsModule } from '@angular/forms';
 import { MoviePlayer } from '../../components/movie-player/movie-player';
 
 @Component({
-    selector: 'app-series-detail',
+    selector: 'app-anime-series',
     imports: [MovieCard, DatePipe, CommonModule, FormsModule, MoviePlayer, RouterModule],
-    templateUrl: './series-detail.html',
+    templateUrl: './anime-series.html',
     styles: `
     :host {
       display: block;
@@ -54,7 +54,7 @@ import { MoviePlayer } from '../../components/movie-player/movie-player';
   `,
     changeDetection: ChangeDetectionStrategy.Default,
 })
-export class SeriesDetail {
+export class AnimeSeries {
     activeRoute = inject(ActivatedRoute)
     movieS = inject(MovieService)
     favoritesService = inject(FavoritesService)
@@ -254,12 +254,13 @@ export class SeriesDetail {
             next: (res) => {
                 const filtered = this.movieS.filterResults(res.results);
                 if (filtered.length > 0) {
-                    this.recommendations = filtered;
+                    this.recommendations = this.movieS.filterOnlyAnime(filtered);
                 } else if (this.serie && this.serie.genres.length > 0) {
                     // Fallback to genre-based discovery if no direct recommendations
                     this.movieS.getByGenre('tv', this.serie.genres[0].id).subscribe({
                         next: (fallbackRes) => {
-                            this.recommendations = this.movieS.filterResults(fallbackRes.results.filter(s => s.id !== this.serie.id));
+                            const fallbackFiltered = this.movieS.filterResults(fallbackRes.results.filter(s => s.id !== this.serie.id));
+                            this.recommendations = this.movieS.filterOnlyAnime(fallbackFiltered);
                         }
                     });
                 }
@@ -357,7 +358,7 @@ export class SeriesDetail {
     }
 
     getGenrePath(): string {
-        return this.serie && this.movieS.isAnime(this.serie) ? '/anime' : '/series';
+        return '/anime';
     }
 
     goBack() {

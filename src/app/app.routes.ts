@@ -7,8 +7,21 @@ import { Search } from '../pages/search/search';
 import { Favoritos } from '../pages/favoritos/favoritos';
 import { ActorDetail } from '../pages/actor-detail/actor-detail';
 import { DirectorDetail } from '../pages/director-detail/director-detail';
+import { Anime } from '../pages/anime/anime';
 
 export const routes: Routes = [
+    {
+        path: 'anime',
+        component: Anime
+    },
+    {
+        path: 'anime/movie/:id',
+        loadComponent: () => import('../pages/anime-movie/anime-movie').then(m => m.AnimeMovie)
+    },
+    {
+        path: 'anime/series/:id',
+        loadComponent: () => import('../pages/anime-series/anime-series').then(m => m.AnimeSeries)
+    },
     {
         path: 'peliculas',
         component: Peliculas

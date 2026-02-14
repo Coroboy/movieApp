@@ -12,9 +12,9 @@ import { LikesService, LikeStatus } from '../../app/services/likes.service';
 import { MoviePlayer } from '../../components/movie-player/movie-player';
 
 @Component({
-  selector: 'app-movie',
+  selector: 'app-anime-movie',
   imports: [MovieCard, CurrencyPipe, DatePipe, CommonModule, MoviePlayer, RouterModule],
-  templateUrl: './movie.html',
+  templateUrl: './anime-movie.html',
   styles: `
     :host {
       display: block;
@@ -42,7 +42,7 @@ import { MoviePlayer } from '../../components/movie-player/movie-player';
   `,
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class Movie {
+export class AnimeMovie {
   activeRoute = inject(ActivatedRoute)
   movieS = inject(MovieService)
   favoritesService = inject(FavoritesService)
@@ -181,12 +181,13 @@ export class Movie {
       next: (res) => {
         const filtered = this.movieS.filterResults(res.results);
         if (filtered.length > 0) {
-          this.recommendations = filtered;
+          this.recommendations = this.movieS.filterOnlyAnime(filtered);
         } else if (this.movie && this.movie.genres.length > 0) {
           // Fallback to genre-based discovery if no direct recommendations
           this.movieS.getByGenre('movie', this.movie.genres[0].id).subscribe({
             next: (fallbackRes) => {
-              this.recommendations = this.movieS.filterResults(fallbackRes.results.filter(m => m.id !== this.movie.id));
+              const fallbackFiltered = this.movieS.filterResults(fallbackRes.results.filter(m => m.id !== this.movie.id));
+              this.recommendations = this.movieS.filterOnlyAnime(fallbackFiltered);
             }
           });
         }
@@ -283,7 +284,7 @@ export class Movie {
   }
 
   getGenrePath(): string {
-    return this.movie && this.movieS.isAnime(this.movie) ? '/anime' : '/peliculas';
+    return '/anime';
   }
 
   goBack() {

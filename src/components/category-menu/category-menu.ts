@@ -9,7 +9,7 @@ export interface Category {
 @Component({
   selector: 'app-category-menu',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="relative w-full bg-transparent z-40 -mt-16 md:-mt-20">
       <div class="w-full px-6 md:px-12">

@@ -70,7 +70,8 @@ export class Series implements OnInit {
       next: (responses) => {
         responses.forEach(res => {
           const filteredResults = this.movieService.filterResults(res.results);
-          this.series = [...this.series, ...filteredResults]
+          const nonAnimeResults = this.movieService.filterNonAnime(filteredResults);
+          this.series = [...this.series, ...nonAnimeResults]
         })
         this.organizarPorGeneros()
         this.categories = [

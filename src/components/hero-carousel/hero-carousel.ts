@@ -28,8 +28,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
             <img 
               [src]="'https://image.tmdb.org/t/p/original' + item.backdrop_path" 
               [alt]="item.title || item.name"
-              class="w-full h-full object-cover transition-transform scale-100"
-              [class.animate-ken-burns]="currentIndex === i">
+              class="w-full h-full object-cover transition-transform scale-100">
             
             <!-- Refined HBO-style Gradients -->
             <div class="absolute inset-0 z-20 bg-gradient-to-r from-black via-black/40 to-transparent"></div>
@@ -48,7 +47,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                 
                 <div class="space-y-3 md:space-y-6">
                     <!-- Title -->
-                    <h1 class="text-2xl md:text-5xl lg:text-7xl font-black text-white leading-tight drop-shadow-2xl max-w-[85%] md:max-w-full">
+                    <h1 class="text-2xl md:text-5xl lg:text-7xl font-black text-white leading-tight drop-shadow-2xl max-w-full md:max-w-[70%] lg:max-w-[50%]">
                       {{ (item.title || item.name) | uppercase }}
                     </h1>
                     
@@ -125,13 +124,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
     }
     .animate-fade-in-up {
       animation: fadeInUp 0.8s ease-out forwards;
-    }
-    .animate-ken-burns {
-      animation: kenburns 20s linear infinite alternate;
-    }
-    @keyframes kenburns {
-      from { transform: scale(1); }
-      to { transform: scale(1.15); }
     }
     @keyframes fadeInUp {
       from {
@@ -273,8 +265,15 @@ export class HeroCarousel implements OnInit, OnDestroy {
 
   navigateToDetail(item: Result) {
     if (!item) return;
-    const type = item.media_type === 'movie' || item.title ? 'movie' : 'series';
-    this.router.navigate([`/${type}`, item.id]);
+
+    const isActuallyAnime = this.movieService.isAnime(item);
+    const mediaType = item.media_type === 'tv' || (item.name && !item.title) ? 'series' : 'movie';
+
+    if (isActuallyAnime) {
+      this.router.navigate([`/anime/${mediaType}`, item.id]);
+    } else {
+      this.router.navigate([`/${mediaType}`, item.id]);
+    }
   }
 
   getGenreNames(genreIds: number[] | undefined): string {

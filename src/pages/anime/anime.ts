@@ -11,9 +11,9 @@ import { HeroCarousel } from '../../components/hero-carousel/hero-carousel';
 import { CategoryMenu, Category } from '../../components/category-menu/category-menu';
 
 @Component({
-  selector: 'app-peliculas',
+  selector: 'app-anime',
   imports: [MovieCard, CommonModule, HeroCarousel, CategoryMenu],
-  templateUrl: './peliculas.html',
+  templateUrl: './anime.html',
   styles: `
     :host {
       display: block;
@@ -21,9 +21,9 @@ import { CategoryMenu, Category } from '../../components/category-menu/category-
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Peliculas implements OnInit {
+export class Anime implements OnInit {
   activeRoute = inject(ActivatedRoute)
-  peliculas: Result[] = []
+  animeItems: Result[] = []
   genreGroups: GenreGroup[] = []
   filteredMovies: Result[] = []
   categories: Category[] = []
@@ -43,49 +43,49 @@ export class Peliculas implements OnInit {
 
   ngOnInit() {
     this.updateMetaTags();
-    this.cargarTodasLasPaginas();
+    this.cargarAnime();
   }
 
   updateMetaTags() {
-    const title = 'Películas - movieApp';
-    const description = 'Explora las mejores películas, estrenos y clásicos en cartelera. Detalles, tráilers y recomendaciones personalizadas.';
+    const title = 'Anime - movieApp';
+    const description = 'Encuentra las mejores películas y series de Anime japonés en un solo lugar. Colección exclusiva de animación japonesa.';
     this.titleService.setTitle(title);
     this.meta.updateTag({ name: 'description', content: description });
     this.meta.updateTag({ property: 'og:title', content: title });
     this.meta.updateTag({ property: 'og:description', content: description });
-    this.meta.updateTag({ property: 'og:type', content: 'website' });
   }
 
-  cargarTodasLasPaginas() {
+  cargarAnime() {
     this.loading = true
     const requests = [];
-    // Load first 10 pages for both categories
+
+    // Load Movies and Series
     for (let page = 1; page <= 10; page++) {
       requests.push(this.movieS.obtenerCartelera(page));
       requests.push(this.movieS.obtenerEstrenos(page));
+      requests.push(this.movieS.obtenerSeriesTopRated(page));
     }
 
     forkJoin(requests).subscribe({
       next: (responses) => {
-        const allResults: Result[] = [];
+        const allAnimeResults: Result[] = [];
         responses.forEach(res => {
-          const filteredResults = this.movieS.filterResults(res.results);
-          const nonAnimeResults = this.movieS.filterNonAnime(filteredResults);
-          allResults.push(...nonAnimeResults);
+          const onlyAnime = this.movieS.filterOnlyAnime(res.results);
+          allAnimeResults.push(...onlyAnime);
         });
 
-        // Remove duplicates based on ID
+        // Remove duplicates
         const uniqueMap = new Map<number, Result>();
-        allResults.forEach(movie => {
-          if (!uniqueMap.has(movie.id)) {
-            uniqueMap.set(movie.id, movie);
+        allAnimeResults.forEach(item => {
+          if (!uniqueMap.has(item.id)) {
+            uniqueMap.set(item.id, item);
           }
         });
 
-        this.peliculas = Array.from(uniqueMap.values());
+        this.animeItems = Array.from(uniqueMap.values());
 
-        // Sort by popularity and rating (consistent with search)
-        this.peliculas.sort((a, b) => {
+        // Sort by popularity
+        this.animeItems.sort((a, b) => {
           const scoreA = (a.popularity || 0) + (a.vote_average || 0) * 10;
           const scoreB = (b.popularity || 0) + (b.vote_average || 0) * 10;
           return scoreB - scoreA;
@@ -93,7 +93,7 @@ export class Peliculas implements OnInit {
 
         this.organizarPorGeneros()
         this.categories = [
-          { id: 0, name: 'Destacados' },
+          { id: 0, name: 'Animes Destacados' },
           ...this.genreGroups.map(g => ({ id: g.genreId, name: g.genreName }))
         ];
 
@@ -103,7 +103,7 @@ export class Peliculas implements OnInit {
           const genreId = parseInt(genreIdParam, 10);
           this.onCategorySelected(genreId);
         } else {
-          this.filteredMovies = this.peliculas;
+          this.filteredMovies = this.animeItems;
         }
 
         this.loading = false
@@ -119,13 +119,13 @@ export class Peliculas implements OnInit {
   organizarPorGeneros() {
     const genreMap = new Map<number, Result[]>();
 
-    this.peliculas.forEach(movie => {
-      if (movie.genre_ids && movie.genre_ids.length > 0) {
-        movie.genre_ids.forEach(genreId => {
+    this.animeItems.forEach(item => {
+      if (item.genre_ids && item.genre_ids.length > 0) {
+        item.genre_ids.forEach(genreId => {
           if (!genreMap.has(genreId)) {
             genreMap.set(genreId, []);
           }
-          genreMap.get(genreId)!.push(movie);
+          genreMap.get(genreId)!.push(item);
         });
       }
     });
@@ -143,12 +143,43 @@ export class Peliculas implements OnInit {
   onCategorySelected(genreId: number) {
     this.selectedCategoryId = genreId;
     if (genreId === 0) {
-      this.filteredMovies = this.peliculas;
+      this.filteredMovies = this.animeItems;
+      this.cdr.markForCheck();
     } else {
+      // First show what we have locally
       const genreGroup = this.genreGroups.find(g => g.genreId === genreId);
       this.filteredMovies = genreGroup ? genreGroup.items : [];
-    }
+      this.cdr.markForCheck();
 
-    this.cdr.markForCheck();
+      // Then fetch more results specifically for this genre (both movies and series)
+      // and filter for Anime (Animation + Japanese)
+      this.loading = true;
+      const movieReq = this.movieS.getByGenre('movie', genreId);
+      const seriesReq = this.movieS.getByGenre('tv', genreId);
+
+      forkJoin([movieReq, seriesReq]).subscribe({
+        next: ([movieRes, seriesRes]) => {
+          const combined = [...movieRes.results, ...seriesRes.results];
+          const onlyAnime = this.movieS.filterOnlyAnime(combined);
+
+          // Merge with current filtered items and remove duplicates
+          const uniqueMap = new Map<number, Result>();
+          [...this.filteredMovies, ...onlyAnime].forEach(item => {
+            if (!uniqueMap.has(item.id)) {
+              uniqueMap.set(item.id, item);
+            }
+          });
+
+          this.filteredMovies = Array.from(uniqueMap.values());
+          this.loading = false;
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          console.error('Error fetching more animes by genre', err);
+          this.loading = false;
+          this.cdr.markForCheck();
+        }
+      });
+    }
   }
 }

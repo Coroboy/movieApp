@@ -15,7 +15,7 @@
     <div class="flex justify-center items-center py-20">
         <div class="text-center">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
-            <p class="mt-4 text-heading">Cargando series...</p>
+            <p class="mt-4 text-white">Cargando series...</p>
         </div>
     </div>
     } @else {
@@ -27,7 +27,7 @@
         <div #carouselContainer class="flex overflow-x-auto gap-4 md:gap-6 pb-8 no-scrollbar scroll-smooth">
             @for (serie of filteredMovies; track serie.id) {
             <app-movie-card [movie]="serie" [type]="'tv'"
-                class="flex-shrink-0 w-44 md:w-64 hover:scale-105 transition-transform duration-300"></app-movie-card>
+                class="flex-shrink-0 w-44 md:w-64 transition-transform duration-300"></app-movie-card>
             }
         </div>
     </div>

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core
 import { Result } from '../../app/interfaces/interface';
 import { Router } from '@angular/router';
 import { FavoritesService } from '../../app/services/favorites.service';
+import { MovieService } from '../../app/services/movieService';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,8 +10,11 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <div (click)="navigateToMovie()" 
-         class="group relative overflow-hidden rounded-xl bg-gray-900 shadow-lg transition-all duration-500 cursor-pointer hover:z-50 hover:shadow-2xl hover:ring-2 hover:ring-yellow-400/40">
+         class="group relative overflow-hidden rounded-xl bg-gray-900 shadow-lg transition-all duration-500 cursor-pointer hover:z-50 hover:shadow-2xl hover:rounded-none">
       
+      <!-- Border Overlay (Ensures border is never clipped and always square on hover) -->
+      <div class="absolute inset-0 z-40 border-2 border-transparent transition-all duration-500 rounded-xl group-hover:border-yellow-400 group-hover:rounded-none pointer-events-none"></div>
+
       <!-- Favorite Button -->
       <button (click)="toggleFavorite($event)" 
               class="absolute top-3 right-3 z-30 p-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0">
@@ -55,6 +59,13 @@ import { CommonModule } from '@angular/common';
   styles: `
     :host {
       display: block;
+      /* Hardware acceleration to prevent corner squaring during scale */
+      transform: translateZ(0);
+      will-change: transform;
+      /* Added room for scaling to prevent clipping in horizontal containers */
+      padding: 12px 0;
+      margin-top: -12px;
+      margin-bottom: -12px;
     }
   `,
   changeDetection: ChangeDetectionStrategy.Default,
@@ -63,8 +74,10 @@ export class MovieCard {
   @Input({ required: true }) movie!: Result
   @Input() type: 'movie' | 'tv' = 'movie'; // Type is 'movie' by default
   @Input() isCompact: boolean = false; // New input for compact mode
+  @Input() isAnime: boolean = false; // New input for Anime mode
   router = inject(Router)
   favoritesService = inject(FavoritesService);
+  movieService: MovieService = inject(MovieService);
 
   get isFavorite(): boolean {
     return this.favoritesService.isFavorite(this.movie.id);
@@ -81,10 +94,21 @@ export class MovieCard {
 
   //Declaracion del metodo navigateToMovie
   navigateToMovie() {
-    if (this.type === 'movie') {
-      this.router.navigateByUrl(`/movie/${this.movie.id}`)
+    // Automatically detect anime if the flag is not manually set
+    const isActuallyAnime = this.isAnime || this.movieService.isAnime(this.movie);
+
+    if (isActuallyAnime) {
+      if (this.type === 'movie') {
+        this.router.navigateByUrl(`/anime/movie/${this.movie.id}`);
+      } else {
+        this.router.navigateByUrl(`/anime/series/${this.movie.id}`);
+      }
     } else {
-      this.router.navigateByUrl(`/series/${this.movie.id}`)
+      if (this.type === 'movie') {
+        this.router.navigateByUrl(`/movie/${this.movie.id}`);
+      } else {
+        this.router.navigateByUrl(`/series/${this.movie.id}`);
+      }
     }
   }
 }
