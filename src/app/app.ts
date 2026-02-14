@@ -15,12 +15,12 @@ import { Navbar } from '../components/shared/navbar/navbar';
 export class App implements OnInit {
   protected readonly title = signal('movieApp');
   private router = inject(Router);
+  private scroller = inject(ViewportScroller);
 
   constructor() {
-    const scroller = inject(ViewportScroller);
     this.router.events.pipe(
-      filter((e): e is Scroll => e instanceof Scroll)
-    ).subscribe(e => {
+      filter(e => e instanceof Scroll)
+    ).subscribe((e: Scroll) => {
       if (e.routerEvent instanceof NavigationEnd) {
         const url = e.routerEvent.urlAfterRedirects;
         const isDetailPage = url.startsWith('/movie/') ||
@@ -31,17 +31,30 @@ export class App implements OnInit {
           url.startsWith('/favoritos');
 
         if (isDetailPage) {
-          // For detail pages and search/favorites, ALWAYS go to top
-          scroller.scrollToPosition([0, 0]);
+          // Detail pages: Always Start at Top
+          window.scrollTo(0, 0);
         } else {
-          // For list pages (like the home/genre carousel pages)
+          // List pages: Logic for Restoration vs Top
           if (e.position) {
-            // Backward navigation: restore position
-            // Small delay to ensure content is rendered and height is available
-            setTimeout(() => scroller.scrollToPosition(e.position!), 0);
+            // BACK NAVIGATION: Try to restore position
+            // We use a polling mechanism to wait for the page to render content
+            const [x, y] = e.position;
+            let attempts = 0;
+            const checkHeightAndScroll = () => {
+              // If page has enough height to scroll to y, OR we tried too many times
+              if (document.documentElement.scrollHeight >= y || attempts > 50) {
+                this.scroller.scrollToPosition(e.position!);
+              } else {
+                attempts++;
+                // Check again in 20ms
+                setTimeout(checkHeightAndScroll, 20);
+              }
+            };
+            // Start polling
+            checkHeightAndScroll();
           } else {
-            // Forward navigation: go to top
-            scroller.scrollToPosition([0, 0]);
+            // Forward navigation to list: Start at Top
+            window.scrollTo(0, 0);
           }
         }
       }

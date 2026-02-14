@@ -41,23 +41,23 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
           </div>
 
           <!-- Content -->
-          <div class="relative h-full w-full pl-16 md:pl-28 pr-6 md:pr-12 flex items-center z-30">
+          <div class="relative h-full w-full px-12 md:px-28 flex items-center z-30">
             <div class="w-full animate-fade-in-up">
               <!-- Content Wrapper with Fixed Bottom Alignment for Buttons -->
               <div class="flex flex-col h-full justify-center">
                 
-                <div class="space-y-4 md:space-y-6">
+                <div class="space-y-3 md:space-y-6">
                     <!-- Title -->
-                    <h1 class="text-3xl md:text-5xl lg:text-7xl font-black text-white leading-tight drop-shadow-2xl">
+                    <h1 class="text-2xl md:text-5xl lg:text-7xl font-black text-white leading-tight drop-shadow-2xl max-w-[85%] md:max-w-full">
                       {{ (item.title || item.name) | uppercase }}
                     </h1>
                     
                     <!-- Metadata -->
-                    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm md:text-lg font-bold text-white/90">
+                    <div class="flex flex-wrap items-center gap-x-4 md:gap-x-6 gap-y-1 text-[10px] md:text-lg font-bold text-white/90">
                       <span>{{ (item.release_date || item.first_air_date) | date:'yyyy' }}</span>
                       
-                      <span class="flex items-center gap-4">
-                        <span class="px-1.5 py-0.5 border border-white/40 rounded text-[10px]">
+                      <span class="flex items-center gap-2 md:gap-4">
+                        <span class="px-1 py-0.5 border border-white/40 rounded text-[8px] md:text-[10px]">
                           {{ getCertification(item.id) }}
                         </span>
                         <span>{{ getRuntime(item.id) }}</span>
@@ -71,8 +71,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                     </div>
 
                     <!-- Description with Fixed Height Container -->
-                    <div class="min-h-[50px] md:min-h-[80px] md:max-w-[50%]">
-                        <p class="text-white/80 text-sm md:text-lg lg:text-xl leading-relaxed line-clamp-2 font-medium">
+                    <div class="min-h-[40px] md:min-h-[80px] md:max-w-[70%] lg:max-w-[50%]">
+                        <p class="text-white/80 text-xs md:text-lg lg:text-xl leading-relaxed line-clamp-2 md:line-clamp-3 font-medium">
                           {{ item.overview }}
                         </p>
                     </div>
@@ -86,22 +86,22 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
       <!-- Improved Navigation Arrows - Visible on Mobile -->
       <button 
         (click)="prevSlide(); $event.stopPropagation()"
-        class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 p-2 text-yellow-400/40 hover:text-yellow-400 transition-all z-40 cursor-pointer">
-        <svg class="w-8 h-8 md:w-14 md:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        class="absolute left-1 md:left-6 top-1/2 -translate-y-1/2 p-2 text-yellow-400/30 hover:text-yellow-400 transition-all z-40 cursor-pointer">
+        <svg class="w-6 h-6 md:w-14 md:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
         </svg>
       </button>
 
       <button 
         (click)="nextSlide(); $event.stopPropagation()"
-        class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 p-2 text-yellow-400/40 hover:text-yellow-400 transition-all z-40 cursor-pointer">
-        <svg class="w-8 h-8 md:w-14 md:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        class="absolute right-1 md:right-6 top-1/2 -translate-y-1/2 p-2 text-yellow-400/30 hover:text-yellow-400 transition-all z-40 cursor-pointer">
+        <svg class="w-6 h-6 md:w-14 md:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
         </svg>
       </button>
 
       <!-- Dot Indicators -->
-      <div class="absolute bottom-24 md:bottom-28 left-1/2 -translate-x-1/2 flex gap-3 z-40">
+      <div class="absolute bottom-16 md:bottom-28 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3 z-40">
         @for (item of items; track item.id; let i = $index) {
           <button
             (click)="goToSlide(i); $event.stopPropagation()"

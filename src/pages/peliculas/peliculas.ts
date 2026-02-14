@@ -148,11 +148,6 @@ export class Peliculas implements OnInit {
       this.filteredMovies = genreGroup ? genreGroup.items : [];
     }
 
-    // Scroll to top/left of the carousel
-    if (this.carouselContainer) {
-      this.carouselContainer.nativeElement.scrollLeft = 0;
-    }
-
     this.cdr.markForCheck();
   }
 }
